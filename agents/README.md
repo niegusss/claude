@@ -96,32 +96,19 @@ prompt: "Generate an ADR for choosing Supabase as backend"
 
 ---
 
-## Development Flow
+## Typical development flow
 
-```
-npm install ──► dep-analyzer ──► Safe? ──► Continue
-     │               │              │
-     │               ▼              ▼
-     │          Fix/Remove      Write Code
-     │                              │
-     │                              ▼
-     │         quick-lint ◄──► More Code ──► code-reviewer
-     │              │                             │
-     │              ▼                             ▼
-     │         Fix Issues                    Fix Issues
-     │                                            │
-     ▼                                            ▼
-Major Decision ──► adr-generator         Feature Done
-     │                                            │
-     ▼                                            ▼
-docs/adr/XXXX.md                  test-case-generator
-                                                  │
-                                                  ▼
-                                              Commit
-                                                  │
-                                                  ▼
-                                        memory-bank-sync
-```
+Agents fit into a project's lifecycle alongside the skills (`setup-project`, `initial-prompt`, and future ones). A common pattern:
+
+1. **Adding a dependency** → `dep-analyzer` (audit before commit)
+2. **Implementing a feature** → `ui-design` (for components in an existing project)
+3. **Mid-development sanity check** → `quick-lint` (fast TypeScript + secrets scan)
+4. **Before committing** → `code-reviewer` (KISS/SOLID/DRY/YAGNI compliance)
+5. **After committing a feature** → `test-case-generator` (manual + automated test checklist)
+6. **After a feature is done** → `memory-bank-sync` (detect drift, update `activeContext.md` / `progress.md`)
+7. **On major architecture decisions** → `adr-generator` (capture context and alternatives in `docs/adr/`)
+
+Skills handle workflows end-to-end (interview → scaffold → implement); agents handle focused, single-purpose tasks within those workflows.
 
 ---
 
