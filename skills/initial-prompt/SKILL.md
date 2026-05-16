@@ -28,6 +28,10 @@ Do not use if:
 - `memory-bank/` exists with `projectbrief.md` and `techContext.md` filled in
 - Node.js 18+ (LTS) installed
 
+## Interaction style
+
+Use the `AskUserQuestion` tool for every user decision in this flow — not text prompts. This applies to confirming the starting point (Step 4) and the pre-implementation plan (Step 6). Plain text prompts are fine only for diagnostics ("here's what I built, run `npm run dev` to preview") that don't require a decision.
+
 ## Flow
 
 ### 1. Read Memory Bank
@@ -76,7 +80,7 @@ Also check whether `SHADCN_OPTED_IN` is `true` based on `techContext.md` content
 
 ### 4. Determine starting point
 
-If `$ARGUMENTS` is non-empty → use it as the starting instruction (e.g. `landing page`, `dashboard first`, `start with login`).
+If `$ARGUMENTS` is non-empty → use it directly as the starting instruction (e.g. `landing page`, `dashboard first`, `start with login`), skip the confirmation below.
 
 Otherwise analyze `projectbrief.md`:
 
@@ -84,7 +88,11 @@ Otherwise analyze `projectbrief.md`:
 - Look at user flows in `projectbrief.md` — usually start with the entry point of the primary user journey
 - Default priority order: landing/home → auth (if required) → main dashboard → core feature
 
-Present the recommendation in one sentence and proceed unless the user redirects.
+Pick the recommended starting point, then `AskUserQuestion`:
+- **Question:** "Start with **[RECOMMENDED]**? (Reason: [ONE_SENTENCE_REASON])"
+- **Options:**
+  - `"Approve — start there"`
+  - `"Pick a different starting point"` (desc: "Use the Other field to specify, e.g. 'auth flow first' or 'settings page'")
 
 ### 5a. Bootstrap (Vite + React)
 
@@ -188,11 +196,13 @@ Plan:
 - Visual: [style] → [colors, fonts, radii in 1 line]
 - Components: [list]
 - Animations: [if any — Framer Motion targets]
-
-Proceeding.
 ```
 
-Confirm once (only if the user explicitly wants a checkpoint). Otherwise implement.
+Then `AskUserQuestion`:
+- **Question:** "Proceed with this plan?"
+- **Options:**
+  - `"Yes — implement"`
+  - `"Adjust the plan"` (desc: "Use the Other field to specify what to change")
 
 ### 7. Implement
 

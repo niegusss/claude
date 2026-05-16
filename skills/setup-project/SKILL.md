@@ -35,6 +35,19 @@ Do not use if `memory-bank/` already exists AND no argument was given — ask wh
 
 When `$ARGUMENTS` matches a single MCP name, jump straight to **Step 9** for that server, merge into existing `.mcp.json`, and stop.
 
+## Interaction style
+
+Use the `AskUserQuestion` tool for **every** user decision in this flow — not text prompts. This applies to:
+
+- Yes/no choices (e.g. "do you have existing docs?")
+- Picking from a fixed list (e.g. interview intensity, tech stack, visual style)
+- Interview answers, where each question offers the same pattern of options:
+  - `"I'll describe it"` — instructs the user to use the **Other** field below the options to type their detailed answer
+  - `"I don't know yet"` — escape: saves the question to PM Questions, uses a sensible default, continues
+  - (technical questions only) `"Consult with tech lead"` — saves to Tech Lead Consultation collection
+
+Reserve plain text prompts only when the user must paste large content (e.g. a multi-page scope document) — `AskUserQuestion`'s Other field is fine for single-paragraph answers but not for novels.
+
 ## Flow
 
 ### 1. Detect state
@@ -49,36 +62,93 @@ If `has-memory-bank` and no `$ARGUMENTS` → confirm with the user before overwr
 
 ### 2. Gather existing context (optional)
 
-Ask: "Do you have any existing project documentation — scope docs, pitch decks, meeting transcripts, briefs? Paste them or point to a path."
+Use `AskUserQuestion`:
 
-If yes, read materials and extract: project name, problem statement, users, features, constraints. Use these to pre-fill interview answers in Step 3.
+- **Question:** "Do you have existing project documentation to share — scope docs, pitch decks, meeting transcripts, briefs?"
+- **Options:**
+  - `"Yes — I'll paste them"` (desc: "Use the Other field below to paste content or give a file path")
+  - `"No — let's start fresh"`
+
+If the user pastes content (Other) or gives a path, read materials and extract: project name, problem statement, users, features, constraints. Use these to pre-fill interview answers in Step 3.
 
 ### 3. Project brief interview
 
-Ask for interview intensity first: **Standard (3 follow-ups)** / **Thorough (5)** / **Quick (1)**.
+#### 3.0 Interview intensity
 
-For every question include two escape options:
-- `I don't know` → save to PM Questions collection, use sensible default, continue
-- (technical questions only) `Consult with tech lead` → save to Tech Lead Consultation collection
+`AskUserQuestion`:
+- **Question:** "How thorough should I be with follow-up questions if your answers are too vague?"
+- **Options:**
+  - `"Standard — 3 follow-ups (Recommended)"`
+  - `"Thorough — 5 follow-ups"`
+  - `"Quick — no follow-ups, accept first answer"`
 
-Topics:
-- 3.1 Project name & overview
-- 3.2 Problem statement (push for concrete cost of inaction)
-- 3.3 Target users & flows (demographics + step-by-step journeys)
-- 3.4 Detailed scope & features (organized by subsystem: frontend, backend, DB, integrations)
-- 3.5 Tech stack — three options:
-  - **Vite + React + TypeScript + Supabase (recommended)** — sets `STACK=vite`
-  - **Vite + React + Supabase + shadcn/ui** — sets `STACK=vite`, `SHADCN_OPTED_IN=true`
-  - **Next.js 15+ (App Router) + Supabase** — sets `STACK=next`
-  - **Custom** — user specifies; sets `STACK=custom`
-- 3.6 Technical requirements (performance, security, compatibility, scale)
-- 3.7 Restrictions & considerations (deadlines, forbidden tech, must-have integrations)
+Store as `INTENSITY_LIMIT`.
 
-If response is vague (under 2 sentences, no specifics), ask up to the configured follow-up limit. An answer is too vague when it misses concrete examples, quantities, or "why".
+#### 3.1 Project name & overview
+
+`AskUserQuestion`:
+- **Question:** "What is your project called and what does it do?"
+- **Options:**
+  - `"I'll describe it"` (desc: "Pick Other below and type project name + one-paragraph overview")
+  - `"I don't know yet"` (desc: "Save to PM Questions")
+
+#### 3.2 Problem statement
+
+`AskUserQuestion`:
+- **Question:** "What specific problem does this project solve, and what does the current workaround cost?"
+- **Options:** same as 3.1 (`"I'll describe it"` / `"I don't know yet"`)
+
+#### 3.3 Target users & flows
+
+`AskUserQuestion`:
+- **Question:** "Who will use this and what will they do — step by step?"
+- **Options:** same as 3.1
+
+#### 3.4 Detailed scope & features
+
+`AskUserQuestion`:
+- **Question:** "What features do you need? Group by subsystem: frontend, backend, DB, integrations."
+- **Options:** same as 3.1
+
+#### 3.5 Tech stack (TECHNICAL)
+
+`AskUserQuestion`:
+- **Question:** "What tech stack should we use?"
+- **Options:**
+  - `"Vite + React + TypeScript + Supabase (Recommended)"` → sets `STACK=vite`
+  - `"Vite + React + Supabase + shadcn/ui"` → sets `STACK=vite`, `SHADCN_OPTED_IN=true`
+  - `"Next.js 15+ (App Router) + Supabase"` → sets `STACK=next`
+  - `"Consult with tech lead"` → save to Tech Lead Consultation, use Vite default
+- (Other = user types custom stack → sets `STACK=custom`)
+
+#### 3.6 Technical requirements (TECHNICAL)
+
+`AskUserQuestion`:
+- **Question:** "What technical requirements must the system meet — performance, security, compatibility, scale?"
+- **Options:**
+  - `"I'll describe them"` (Other)
+  - `"Use sensible defaults"` (modern browsers, standard security, no special perf targets)
+  - `"Consult with tech lead"`
+
+#### 3.7 Restrictions & considerations (TECHNICAL)
+
+`AskUserQuestion`:
+- **Question:** "Any restrictions, deadlines, forbidden technologies, or must-have integrations?"
+- **Options:**
+  - `"I'll describe them"` (Other)
+  - `"No specific constraints"`
+  - `"Consult with tech lead"`
+
+#### Follow-up handling
+
+If the user's answer in **Other** is vague (under 2 sentences, no concrete examples or quantities), follow up with another `AskUserQuestion`:
+- **Options:** `"I'll add more detail"` (Other) / `"That's all I have"`
+
+Cap at `INTENSITY_LIMIT` follow-ups per topic.
 
 ### 4. Visual style proposal
 
-Recommend one based on project context. Present a single choice, justified in 2 sentences, then accept / pick another / skip.
+Recommend one style based on project context (audience, tone, industry). Pick from:
 
 | Style | Best for |
 |---|---|
@@ -88,16 +158,33 @@ Recommend one based on project context. Present a single choice, justified in 2 
 | Glassmorphism | Dashboards, fintech, AI, premium SaaS |
 | Dark Mode / Midnight | Dev tools, B2B utilities, analytics, gaming |
 
-If chosen, save to `memory-bank/productContext.md` under `## Visual Style`.
+Justify the recommendation in 2 sentences, then `AskUserQuestion`:
+- **Question:** "Approve **[RECOMMENDED_STYLE]** as the visual direction?"
+- **Options:**
+  - `"Approve — [RECOMMENDED_STYLE]"`
+  - `"Pick a different style"`
+  - `"Skip — no visual style for now"`
+
+If "Pick a different style", second `AskUserQuestion`:
+- **Question:** "Which visual style?"
+- **Options:** 4 of the 5 alternatives from the table above (not the one already declined)
+- (Other = user types Brutalist if not in the four, or a custom direction)
+
+If approved or picked, save to `memory-bank/productContext.md` under `## Visual Style`.
 
 ### 5. Git setup
 
-`git status`. If not a repo: ask whether the user has a remote URL.
+Run `git status`. If not a repo, use `AskUserQuestion`:
+- **Question:** "Do you have a remote repository URL for this project?"
+- **Options:**
+  - `"Yes — I'll provide the URL"` (desc: "Paste the URL in the Other field below")
+  - `"No — initialize local-only for now"`
 
-- **Yes** → `git init`, then `git remote add origin <URL>`.
-- **No** → `git init` only. Tell them to contact whoever provisions repos in their organization and connect with `git remote add origin <URL>` later.
+Then:
+- **Yes** → `git init`, then `git remote add origin <URL_FROM_OTHER>`
+- **No** → `git init` only. Inform the user they can connect a remote later with `git remote add origin <URL>` after their team lead / DevOps provisions the repo.
 
-If already a repo, check `git remote -v` and offer the same flow if no remote.
+If already a repo, check `git remote -v`. If no remote, offer the same `AskUserQuestion`.
 
 ### 6. Detect OS
 
@@ -132,17 +219,31 @@ Tell the user how to register it:
 
 ### 9. MCP configuration (interactive or shortcut)
 
-Ask which MCP servers to add (skip if `$ARGUMENTS` already names one). For each selected server:
+Skip if `$ARGUMENTS` already names a specific MCP server (jump straight to credentials + merge for that one).
 
-1. Ask for credentials (URLs, tokens) — never write tokens to git-tracked files
-2. Read the per-server template from `${CLAUDE_SKILL_DIR}/templates/mcp/<server>.json`
-3. Adjust for `OS` (Windows wraps the command in `cmd /c`)
-4. Merge into the project's `.mcp.json` (do not overwrite other servers)
-5. Create `memory-bank/integrations/<server>.md` with status info
+Otherwise use `AskUserQuestion` with `multiSelect: true`:
+- **Question:** "Which MCP servers would you like to configure?"
+- **Options** (4 most common):
+  - `"Supabase — database, auth, realtime"`
+  - `"Context7 — live library docs"`
+  - `"Netlify — deployment"`
+  - `"ClickUp — task management"`
+- (Other = user types `spec-workflow` or any other server name they want)
 
-Servers available: `supabase`, `context7`, `spec-workflow`, `netlify`, `clickup`.
+For each selected server:
 
-For Spec Workflow, after configuration ask if they want a quick guide — if yes, point them at `docs/spec-workflow-guide.md` in this repo.
+1. Ask for credentials (URLs, tokens) with a plain text prompt — `AskUserQuestion` is not suitable for long, free-form tokens
+2. Never write tokens to git-tracked files
+3. Read the per-server template from `${CLAUDE_SKILL_DIR}/templates/mcp/<server>.json`
+4. Adjust for `OS` (Windows wraps the command in `cmd /c`)
+5. Merge into the project's `.mcp.json` (do not overwrite other servers)
+6. Create `memory-bank/integrations/<server>.md` with status info
+
+If the user selected Spec Workflow (or typed it via Other), after configuration use `AskUserQuestion`:
+- **Question:** "Would you like a quick guide on how to use Spec Workflow?"
+- **Options:** `"Yes — show me the guide"` / `"No — I'm familiar"`
+
+If yes, point them at `docs/spec-workflow-guide.md` in this repo.
 
 ### 10. Verification
 
