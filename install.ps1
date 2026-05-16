@@ -28,12 +28,19 @@ New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
 try {
     # --- Clone (shallow, single branch) ---
+    # Note: git writes progress to stderr by design. We relax ErrorActionPreference
+    # locally so that stderr lines don't abort the script.
     Write-Host 'Fetching latest skills, agents, and docs...' -ForegroundColor White
-    & git clone --depth 1 --single-branch $Repo $tempDir 2>&1 | Out-Host
 
-    if ($LASTEXITCODE -ne 0) {
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    git clone --depth 1 --single-branch $Repo $tempDir 2>&1 | Out-Host
+    $cloneExitCode = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
+
+    if ($cloneExitCode -ne 0) {
         Write-Host ''
-        Write-Host "Error: Failed to clone $Repo" -ForegroundColor Red
+        Write-Host "Error: Failed to clone $Repo (exit code $cloneExitCode)" -ForegroundColor Red
         Write-Host ''
         Write-Host 'If this is a private repository, make sure you are authenticated:'
         Write-Host '  - GitHub CLI:        gh auth login'
