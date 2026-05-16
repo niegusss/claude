@@ -8,13 +8,13 @@ These agents can be invoked via the Task tool to perform specialized development
 
 | Agent | Purpose | When to use |
 |-------|---------|-------------|
-| [code-reviewer](./code-reviewer.md) | CLAUDE.md principles check | After significant code changes |
+| [code-reviewer](./code-reviewer.md) | KISS/SOLID/DRY/YAGNI compliance | After significant code changes |
 | [test-case-generator](./test-case-generator.md) | Generate test checklists | After feature implementation |
-| [memory-bank-sync](./memory-bank-sync.md) | Keep memory-bank in sync | After commits, after major changes |
-| [quick-lint](./quick-lint.md) | TypeScript + secrets scan | During development, before commit |
-| [dep-analyzer](./dep-analyzer.md) | Security + bundle size audit | After `npm install`, periodically |
+| [memory-bank-sync](./memory-bank-sync.md) | Detect drift between code and memory-bank | After commits, after major changes |
+| [quick-lint](./quick-lint.md) | TypeScript + secrets scan (<5s) | During development, before commit |
+| [dep-analyzer](./dep-analyzer.md) | npm audit + bundle size + maintenance + license | After `npm install`, periodically |
 | [adr-generator](./adr-generator.md) | Architecture Decision Records | After major design decisions |
-| [ui-design](./ui-design.md) | UI/UX design proposals | When designing a new feature |
+| [security-scanner](./security-scanner.md) | P0 security checklist scan (from SECURITY.md) | Before deploying to production |
 
 ---
 
@@ -101,12 +101,12 @@ prompt: "Generate an ADR for choosing Supabase as backend"
 Agents fit into a project's lifecycle alongside the skills (`setup-project`, `initial-prompt`, and future ones). A common pattern:
 
 1. **Adding a dependency** → `dep-analyzer` (audit before commit)
-2. **Implementing a feature** → `ui-design` (for components in an existing project)
-3. **Mid-development sanity check** → `quick-lint` (fast TypeScript + secrets scan)
-4. **Before committing** → `code-reviewer` (KISS/SOLID/DRY/YAGNI compliance)
-5. **After committing a feature** → `test-case-generator` (manual + automated test checklist)
-6. **After a feature is done** → `memory-bank-sync` (detect drift, update `activeContext.md` / `progress.md`)
-7. **On major architecture decisions** → `adr-generator` (capture context and alternatives in `docs/adr/`)
+2. **Mid-development sanity check** → `quick-lint` (fast TypeScript + secrets scan)
+3. **Before committing** → `code-reviewer` (KISS/SOLID/DRY/YAGNI compliance)
+4. **After committing a feature** → `test-case-generator` (manual + automated test checklist)
+5. **After a feature is done** → `memory-bank-sync` (detect drift, update `activeContext.md` / `progress.md`)
+6. **On major architecture decisions** → `adr-generator` (capture context and alternatives in `docs/adr/`)
+7. **Before deploying to production** → `security-scanner` (P0 violations from `SECURITY.md`)
 
 Skills handle workflows end-to-end (interview → scaffold → implement); agents handle focused, single-purpose tasks within those workflows.
 

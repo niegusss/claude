@@ -72,12 +72,12 @@ Specialized subagents in `agents/`. Each is invoked on demand by Claude during a
 | Agent | Trigger |
 |-------|---------|
 | `adr-generator` | Generates Architecture Decision Records when a major design choice is made |
-| `code-reviewer` | Reviews staged changes for quality, conventions, and obvious issues |
-| `dep-analyzer` | Audits `package.json` dependencies for risk, freshness, and security |
-| `memory-bank-sync` | Keeps `memory-bank/` files in sync with project state after large changes |
-| `quick-lint` | Fast lint pass before committing |
-| `test-case-generator` | Drafts test cases from a feature description or diff |
-| `ui-design` | Proposes UI patterns and visual designs given a feature brief |
+| `code-reviewer` | Reviews staged changes against KISS/SOLID/DRY/YAGNI |
+| `dep-analyzer` | Audits `package.json` dependencies for security, bundle size, maintenance, license |
+| `memory-bank-sync` | Detects drift between code and `memory-bank/`; auto-updates safe files |
+| `quick-lint` | Fast TypeScript + secrets scan (under 5s) before committing |
+| `security-scanner` | Scans the project against P0 items from `SECURITY.md` before production deploy |
+| `test-case-generator` | Drafts test cases (happy / edge / error / accessibility) from a feature or diff |
 
 See `agents/README.md` for full details on each.
 

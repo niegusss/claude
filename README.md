@@ -9,7 +9,7 @@ A curated set of Claude Code **skills**, **agents**, and a production-grade **se
 - **Skills** (`skills/`) — auto-invoked Claude Code skills with structured directories (`SKILL.md` + optional `templates/`, `scripts/`, `examples/`).
   - `setup-project` — interview-driven project bootstrap: Memory Bank, Git, CLAUDE.md, prompt-reminder hook, MCP servers (Supabase, Context7, Spec Workflow, Netlify, ClickUp).
   - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React or Next.js, bootstraps if needed, implements based on `projectbrief.md`.
-- **Agents** (`agents/`) — 7 specialized subagents (`code-reviewer`, `quick-lint`, `dep-analyzer`, `test-case-generator`, `memory-bank-sync`, `adr-generator`, `ui-design`).
+- **Agents** (`agents/`) — 7 specialized subagents (`code-reviewer`, `quick-lint`, `dep-analyzer`, `test-case-generator`, `memory-bank-sync`, `adr-generator`, `security-scanner`).
 - **Docs** (`docs/`) — long-form guides referenced from skills (e.g. Spec Workflow tutorial).
 - **`SECURITY.md`** — 2189-line checklist (P0/P1/P2) for React + TypeScript + Supabase projects. 17 categories from secrets and RLS through CSP, CORS, rate limiting, file uploads, IDOR, and production debug hygiene.
 
