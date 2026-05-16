@@ -32,15 +32,20 @@ try {
     # locally so that stderr lines don't abort the script.
     Write-Host 'Fetching latest skills, agents, and docs...' -ForegroundColor White
 
+    # Capture stdout+stderr into a variable so PowerShell doesn't render
+    # git's progress messages (which it writes to stderr by design) as error
+    # objects. Only surface the output if the clone actually fails.
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
-    git clone --depth 1 --single-branch $Repo $tempDir 2>&1 | Out-Host
+    $cloneOutput = & git clone --depth 1 --single-branch $Repo $tempDir 2>&1
     $cloneExitCode = $LASTEXITCODE
     $ErrorActionPreference = $previousErrorActionPreference
 
     if ($cloneExitCode -ne 0) {
         Write-Host ''
         Write-Host "Error: Failed to clone $Repo (exit code $cloneExitCode)" -ForegroundColor Red
+        Write-Host ''
+        $cloneOutput | ForEach-Object { Write-Host $_ }
         Write-Host ''
         Write-Host 'If this is a private repository, make sure you are authenticated:'
         Write-Host '  - GitHub CLI:        gh auth login'
