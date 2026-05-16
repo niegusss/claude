@@ -28,13 +28,12 @@ New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
 try {
     # --- Clone (shallow, single branch) ---
-    # Note: git writes progress to stderr by design. We relax ErrorActionPreference
-    # locally so that stderr lines don't abort the script.
-    Write-Host 'Fetching latest skills, agents, and docs...' -ForegroundColor White
+    # git writes progress to stderr by design. We relax ErrorActionPreference
+    # locally and capture the combined stream into a variable so PowerShell
+    # doesn't render git's progress lines as red error objects. The output is
+    # only surfaced if the clone actually fails.
+    Write-Host 'Fetching latest skills, agents, and docs...'
 
-    # Capture stdout+stderr into a variable so PowerShell doesn't render
-    # git's progress messages (which it writes to stderr by design) as error
-    # objects. Only surface the output if the clone actually fails.
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     $cloneOutput = & git clone --depth 1 --single-branch $Repo $tempDir 2>&1
@@ -76,7 +75,7 @@ try {
     # --- Summary ---
     Write-Host ''
     Write-Host 'Done' -ForegroundColor Green -NoNewline
-    Write-Host " - $Target updated."
+    Write-Host " — $Target updated."
 
     if ($copied.Count -gt 0) {
         Write-Host ''
@@ -101,8 +100,7 @@ try {
     }
 
     Write-Host ''
-    Write-Host 'Next:' -ForegroundColor White -NoNewline
-    Write-Host ' restart Claude Code so the new skills load.'
+    Write-Host 'Next: restart Claude Code so the new skills load.'
     Write-Host 'Usage (Windows):    irm https://raw.githubusercontent.com/niegusss/claude/main/install.ps1 | iex'
     Write-Host 'Usage (mac/linux):  curl -fsSL https://raw.githubusercontent.com/niegusss/claude/main/install.sh | bash'
 

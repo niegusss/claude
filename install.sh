@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="https://github.com/niegusss/claude.git"
-TARGET=".claude"
+TARGET="$HOME/.claude"
 
 # Items to install. Anything not in this list is ignored.
 INSTALL_ITEMS=(
@@ -38,7 +38,7 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 
 # --- Clone (shallow, single branch) ---
 echo "${BOLD}Fetching latest skills, agents, and docs...${RESET}"
-if ! git clone --depth 1 --single-branch "$REPO" "$TEMP_DIR" 2>&1; then
+if ! git clone --depth 1 --single-branch "$REPO" "$TEMP_DIR"; then
   echo ""
   echo "${RED}Error: Failed to clone $REPO${RESET}"
   echo ""
