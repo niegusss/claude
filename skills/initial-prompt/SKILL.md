@@ -1,0 +1,265 @@
+---
+name: initial-prompt
+description: |
+  When the user wants to scaffold the first working page(s) of a project after
+  setup-project. Detects the chosen stack (Vite + React, Next.js, or custom)
+  from techContext.md, bootstraps the project structure if needed, and implements
+  the first logical page based on the project brief. Use when memory-bank/ exists
+  but the project has no working pages yet.
+allowed-tools: Read, Write, Edit, Bash(npm *), Bash(npx *), Bash(git *), Bash(ls *), Bash(mkdir *), Bash(mv *), Bash(chmod *), Bash(cat *), Bash(shopt *), Bash(setopt *)
+---
+
+# initial-prompt
+
+Scaffold the first working page(s) after `setup-project`, using the project brief, chosen stack, and conventions from Memory Bank.
+
+## When to use
+
+- After `setup-project` completed and `memory-bank/projectbrief.md` is filled in
+- The project has no `package.json` yet (full scaffolding) OR has it but no pages yet
+- The user asks "create the first page", "scaffold the app", or similar
+
+Do not use if:
+- `memory-bank/` does not exist → run `setup-project` first
+- The project is already partially built with features → ask the user to request a specific feature instead
+
+## Prerequisites
+
+- `memory-bank/` exists with `projectbrief.md` and `techContext.md` filled in
+- Node.js 18+ (LTS) installed
+
+## Flow
+
+### 1. Read Memory Bank
+
+Parallel read (single message, 7 `Read` tool calls):
+
+- `memory-bank/handbook.md`
+- `memory-bank/projectbrief.md`
+- `memory-bank/techContext.md`
+- `memory-bank/productContext.md`
+- `memory-bank/systemPatterns.md`
+- `memory-bank/activeContext.md`
+- `memory-bank/progress.md`
+
+If `projectbrief.md` is mostly placeholders, stop and tell the user to fill it out first.
+
+### 2. Detect project state
+
+Single `ls -la`. Capture `PROJECT_STATE`:
+
+- `empty` — no `package.json`, no source folders → full bootstrap needed
+- `bootstrapped-vite` — `package.json` + `vite.config.ts` + `src/` → skip bootstrap
+- `bootstrapped-next` — `package.json` + `next.config.*` + `app/` → skip bootstrap
+- `partial` — `package.json` exists but doesn't match a known layout → ask the user before proceeding
+
+### 3. Detect stack
+
+Read `memory-bank/techContext.md`. Set `STACK`:
+
+| Detected | `STACK` | Branch |
+|----------|---------|--------|
+| Vite + React | `vite` | Step 5a |
+| Next.js (any version) | `next` | Step 5b |
+| Other (Vue, Svelte, Remix, Astro, etc.) | `other` | **Stop** with message |
+
+Unsupported stack message:
+
+```
+Stack [X] detected in techContext.md.
+Currently `initial-prompt` supports Vite+React and Next.js.
+For [X], bootstrap the project manually using the official starter, then ask
+Claude to implement the first page based on memory-bank/projectbrief.md.
+```
+
+Also check whether `SHADCN_OPTED_IN` is `true` based on `techContext.md` content (presence of a shadcn/ui section that isn't conditional/stripped).
+
+### 4. Determine starting point
+
+If `$ARGUMENTS` is non-empty → use it as the starting instruction (e.g. `landing page`, `dashboard first`, `start with login`).
+
+Otherwise analyze `projectbrief.md`:
+
+- Check `activeContext.md` for an explicit next step
+- Look at user flows in `projectbrief.md` — usually start with the entry point of the primary user journey
+- Default priority order: landing/home → auth (if required) → main dashboard → core feature
+
+Present the recommendation in one sentence and proceed unless the user redirects.
+
+### 5a. Bootstrap (Vite + React)
+
+Skip if `PROJECT_STATE` is `bootstrapped-vite`.
+
+If the directory is empty:
+
+```bash
+npm create vite@latest . -- --template react-ts
+```
+
+If the directory has content (e.g. memory-bank/ exists):
+
+```bash
+npm create vite@latest temp-app -- --template react-ts
+shopt -s dotglob 2>/dev/null || setopt dotglob 2>/dev/null
+mv temp-app/* . 2>/dev/null || true
+rmdir temp-app
+```
+
+Then:
+
+```bash
+npm install
+npm install react-router-dom framer-motion lucide-react
+npm install -D tailwindcss@3 postcss autoprefixer
+npx tailwindcss init -p
+```
+
+Configure Tailwind by updating `tailwind.config.js` `content` to `["./index.html", "./src/**/*.{js,ts,jsx,tsx}"]` and replacing `src/index.css` with the three `@tailwind` directives.
+
+If `SHADCN_OPTED_IN`:
+
+```bash
+npx shadcn@latest init
+```
+
+Create folder structure: `src/pages/`, `src/components/`, `src/hooks/`, `src/utils/`, `src/types/`.
+
+**File path rules:**
+- Pages: `src/pages/PageName.tsx` (PascalCase + `Page` suffix)
+- Components: `src/components/ComponentName.tsx`
+- No leading slashes, no `./` prefix in paths.
+
+Jump to **Step 6**.
+
+### 5b. Bootstrap (Next.js)
+
+Skip if `PROJECT_STATE` is `bootstrapped-next`.
+
+If the directory is empty:
+
+```bash
+npx create-next-app@latest . --typescript --tailwind --app --eslint --no-git --use-npm
+```
+
+If the directory has content:
+
+```bash
+npx create-next-app@latest temp-app --typescript --tailwind --app --eslint --no-git --use-npm
+shopt -s dotglob 2>/dev/null || setopt dotglob 2>/dev/null
+mv temp-app/* . 2>/dev/null || true
+rmdir temp-app
+```
+
+Then:
+
+```bash
+npm install framer-motion lucide-react
+```
+
+If `SHADCN_OPTED_IN`:
+
+```bash
+npx shadcn@latest init
+```
+
+**File path rules (Next.js App Router):**
+- Routes: `app/<route>/page.tsx` (lowercase folder)
+- Layouts: `app/layout.tsx` (root), nested `layout.tsx` per route
+- Components: `components/ComponentName.tsx` (PascalCase)
+- Server components by default; add `'use client'` only when needed (state, effects, browser APIs)
+
+### 6. Pre-implementation plan
+
+Derive visual style from `memory-bank/productContext.md` under `## Visual Style`. Translate the style name to concrete tokens:
+
+- **Soft / Agency** → warm palette, `rounded-2xl`, soft shadows, generous padding
+- **Minimalist** → neutral grays, `rounded-md`, no shadows, tight spacing, type-driven
+- **Brutalist** → black/white + one accent, `rounded-none`, bold borders, monospace
+- **Glassmorphism** → vivid gradient bg, `backdrop-blur` cards, `white/10` borders, layered depth
+- **Dark Mode / Midnight** → `slate-900` bg, neon accent (emerald/violet/cyan), glow shadows
+
+If no style defined, derive from project type (consumer SaaS → soft; dev tool → brutalist or dark; content app → minimalist).
+
+State the plan concisely:
+
+```
+Plan:
+- Page(s): [list]
+- Visual: [style] → [colors, fonts, radii in 1 line]
+- Components: [list]
+- Animations: [if any — Framer Motion targets]
+
+Proceeding.
+```
+
+Confirm once (only if the user explicitly wants a checkpoint). Otherwise implement.
+
+### 7. Implement
+
+Follow the conventions already documented in `memory-bank/systemPatterns.md` and `memory-bank/techContext.md` — don't restate them inline. Key reminders:
+
+- Implement only the specific feature(s) chosen in Step 4. No speculative scope.
+- Write complete, runnable code. No `// TODO` placeholders.
+- TypeScript strict; explicit prop interfaces.
+- Tailwind utility classes; design tokens defined once and reused.
+- Framer Motion sparingly — `ease-out` for appearing, target specific properties (never `transition: all`).
+- Buttons get `:active` `scale(0.97)` for tactile feel.
+- Loading and error states for every async boundary.
+- Lucide React for icons. shadcn/ui components only if `SHADCN_OPTED_IN`.
+- Accessibility: semantic HTML, ARIA labels on interactive non-button elements, keyboard reachable.
+
+### 8. Verify build
+
+Run in order, gate each step on the previous:
+
+```bash
+# 1. Type check (fastest)
+npx tsc --noEmit
+
+# 2. Linter
+npx eslint . --max-warnings 0
+
+# 3. Final build
+npm run build
+```
+
+Fix errors before moving to the next step. **Do not** run `npm run dev` — the user does that.
+
+### 9. Update Memory Bank
+
+Update `memory-bank/activeContext.md`:
+
+- Current focus → "First implementation complete: [page names]"
+- Immediate next steps → "[Logical follow-up — e.g., 'Add auth flow' or 'Implement [F2]']"
+
+Update `memory-bank/progress.md`:
+
+- Move implemented features from Backlog to Done
+- Note "In progress" if anything is partial
+
+### 10. Summary
+
+Print a concise summary:
+
+```
+Created:
+- [file paths]
+
+Features implemented:
+- [bulleted list from Step 4]
+
+Build: passed (tsc, eslint, npm run build)
+
+Next step: run `setup-tests` to add Vitest infrastructure and start TDD.
+The user can also run `npm run dev` to preview.
+```
+
+## Output
+
+- Project scaffolded (if needed): `package.json`, Vite/Next.js config, source folders
+- First page(s) implemented per the project brief
+- `memory-bank/activeContext.md` and `memory-bank/progress.md` updated
+
+## Next step
+
+After this, the user typically runs the `setup-tests` skill to add testing infrastructure.
