@@ -85,13 +85,21 @@ See `agents/README.md` for full details on each.
 
 ## Installation
 
-One-liner for end users:
+**macOS / Linux:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/niegusss/claude/main/install.sh | bash
 ```
 
-This clones the repo and copies `skills/`, `agents/`, `docs/`, `MANIFEST.md`, and `SECURITY.md` into `~/.claude/`. Existing files in `~/.claude/` are left in place.
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/niegusss/claude/main/install.ps1 | iex
+```
+
+Both installers clone the repo and copy `skills/`, `agents/`, `docs/`, `MANIFEST.md`, `SKILLS_AND_AGENTS.md`, and `SECURITY.md` into `~/.claude/` (macOS / Linux) or `%USERPROFILE%\.claude\` (Windows). Existing files in the target directory are left in place.
+
+Requirements: `git` available in PATH.
 
 After installing, **restart Claude Code** so it picks up the new skills.
 

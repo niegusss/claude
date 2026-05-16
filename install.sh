@@ -93,4 +93,5 @@ fi
 
 echo ""
 echo "${BOLD}Next:${RESET} restart Claude Code so the new skills load."
-echo "Usage:  curl -fsSL https://raw.githubusercontent.com/niegusss/claude/main/install.sh | bash"
+echo "Usage (mac/linux):  curl -fsSL https://raw.githubusercontent.com/niegusss/claude/main/install.sh | bash"
+echo "Usage (Windows):    irm https://raw.githubusercontent.com/niegusss/claude/main/install.ps1 | iex"
