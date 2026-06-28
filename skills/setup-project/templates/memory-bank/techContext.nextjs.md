@@ -14,12 +14,12 @@
 - shadcn/ui (Radix + Tailwind) — _only included if user opted in during setup_
 
 **Backend:**
-- Supabase (PostgreSQL + Auth + Realtime + Storage) — via `@supabase/ssr`
-- Or Next.js API routes / Server Actions
+- Next.js API routes / Server Actions
+- Supabase (PostgreSQL + Auth + Realtime + Storage) — via `@supabase/ssr`; _only included if Supabase opted in during setup_
 
 **Deployment:**
 - Vercel (recommended for Next.js)
-- Supabase Cloud (backend)
+- Supabase Cloud (backend) — _only included if Supabase opted in during setup_
 
 ## Design tokens
 
@@ -51,7 +51,7 @@ npm install framer-motion lucide-react
 # npx shadcn@latest init
 ```
 
-For Supabase:
+For Supabase (_only included if Supabase opted in during setup_):
 
 ```bash
 npm install @supabase/supabase-js @supabase/ssr
@@ -76,7 +76,7 @@ npm run build
 
 ## Environment variables
 
-Create `.env.local` (gitignored):
+Create `.env.local` (gitignored). _Supabase entries only included if Supabase opted in during setup:_
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
@@ -93,6 +93,8 @@ SUPABASE_SERVICE_ROLE_KEY=server-only-key  # Never expose client-side
 [Fill in from interview Step 3.6.]
 
 ## Supabase + Next.js patterns
+
+_Only included if Supabase opted in during setup._
 
 - Use `@supabase/ssr` for cookie-based auth in server components.
 - Service-role key only in server contexts (Server Actions, route handlers).

@@ -3,7 +3,7 @@
 ## Architecture overview
 
 - **Frontend:** Next.js 15+ App Router
-- **Backend:** Supabase via `@supabase/ssr` + Next.js Server Actions / route handlers
+- **Backend:** Next.js Server Actions / route handlers; Supabase via `@supabase/ssr` — _Supabase only if opted in during setup_
 - **State:** Server components by default; React Context only when state must cross client boundaries
 - **Routing:** File-based via `app/` directory
 
@@ -21,7 +21,7 @@ app/
     page.tsx
 components/          # Reusable UI (PascalCase)
 lib/
-  supabase/          # Supabase clients (server, browser, middleware)
+  supabase/          # Supabase clients (server, browser, middleware) — only if Supabase opted in
   utils.ts           # Shared helpers
 public/              # Static assets
 ```
@@ -79,10 +79,9 @@ public/              # Static assets
 
 ## Security
 
-- Service-role keys: server-only. Never expose them in client components or env vars prefixed with `NEXT_PUBLIC_`.
 - Validate input in Server Actions / route handlers (use Zod or similar).
-- Supabase RLS on every user-data table.
 - HTTPS only.
+- _Supabase only (if opted in during setup):_ service-role keys are server-only — never expose them in client components or env vars prefixed with `NEXT_PUBLIC_`; enable RLS on every user-data table.
 
 ## Error handling
 

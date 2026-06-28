@@ -9,7 +9,7 @@ A curated set of Claude Code **skills**, **agents**, and a production-grade **se
 - **Skills** (`skills/`) — auto-invoked Claude Code skills with structured directories (`SKILL.md` + optional `templates/`, `scripts/`, `examples/`).
   - `audit-brief` — audits an existing brief/scope (a file or a folder of docs) for completeness before building: missing info, missing screens, unclear flows, edge cases and their consequences, contradictions. Interviews you to fill gaps, then writes an audit report plus a corrected copy. Analysis only — never scaffolds. Invoked with a path: `/audit-brief docs/`.
   - `setup-project` — interview-driven project bootstrap: Memory Bank, Git, CLAUDE.md, prompt-reminder hook, MCP servers (Supabase, Context7, Spec Workflow, Netlify, ClickUp).
-  - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React or Next.js, bootstraps if needed, implements based on `projectbrief.md`.
+  - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React, Next.js, or Astro, bootstraps if needed, implements based on `projectbrief.md`.
   - `fix-bug` — diagnoses and fixes one specific bug: locates the suspect code, finds the root cause, reproduces it, proposes the smallest fix, applies it after confirmation, then verifies with tsc/eslint/build. Invoked with a description: `/fix-bug "login throws 500 on empty email"`.
 - **Agents** (`agents/`) — 7 specialized subagents (`code-reviewer`, `quick-lint`, `dep-analyzer`, `test-case-generator`, `memory-bank-sync`, `adr-generator`, `security-scanner`).
 - **Docs** (`docs/`) — long-form guides referenced from skills (e.g. Spec Workflow tutorial).
@@ -69,7 +69,7 @@ Walks you through an interview, builds the Memory Bank, initializes Git, and con
 /initial-prompt
 ```
 
-Bootstraps the project (Vite + React or Next.js) and implements the first page from your project brief.
+Bootstraps the project (Vite + React, Next.js, or Astro) and implements the first page from your project brief.
 
 You can also let Claude auto-invoke a skill — say "set up a new project" and it will pick `setup-project` based on the skill description.
 

@@ -15,11 +15,11 @@
 - shadcn/ui (Radix + Tailwind) — _only included if user opted in during setup_
 
 **Backend:**
-- Supabase (PostgreSQL + Auth + Realtime + Storage)
+- Supabase (PostgreSQL + Auth + Realtime + Storage) — _only included if Supabase opted in during setup_
 
 **Deployment:**
 - Vercel (frontend)
-- Supabase Cloud (backend)
+- Supabase Cloud (backend) — _only included if Supabase opted in during setup_
 
 ## Design tokens
 
@@ -78,7 +78,7 @@ npm run build
 
 ## Environment variables
 
-Create `.env.local` (gitignored):
+Create `.env.local` (gitignored). _Supabase entries only included if Supabase opted in during setup:_
 
 ```
 VITE_SUPABASE_URL=your-supabase-url
@@ -94,6 +94,8 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 [Fill in from interview Step 3.6.]
 
 ## Supabase guidelines
+
+_Only included if Supabase opted in during setup._
 
 - Use Row Level Security (RLS) on every table that holds user data.
 - Implement proper auth flows; never expose service-role keys client-side.

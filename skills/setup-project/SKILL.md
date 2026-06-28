@@ -44,7 +44,6 @@ Use the `AskUserQuestion` tool for **every** user decision in this flow — not 
 - Interview answers, where each question offers the same pattern of options:
   - `"I'll describe it"` — instructs the user to use the **Other** field below the options to type their detailed answer
   - `"I don't know yet"` — escape: saves the question to PM Questions, uses a sensible default, continues
-  - (technical questions only) `"Consult with tech lead"` — saves to Tech Lead Consultation collection
 
 Reserve plain text prompts only when the user must paste large content (e.g. a multi-page scope document) — `AskUserQuestion`'s Other field is fine for single-paragraph answers but not for novels.
 
@@ -110,16 +109,39 @@ Store as `INTENSITY_LIMIT`.
 - **Question:** "What features do you need? Group by subsystem: frontend, backend, DB, integrations."
 - **Options:** same as 3.1
 
-#### 3.5 Tech stack (TECHNICAL)
+The tech stack is captured as three separate dimensions — framework, UI layer, and backend — so each is an explicit, independent choice rather than a single bundled option.
+
+#### 3.5a Framework (TECHNICAL)
 
 `AskUserQuestion`:
-- **Question:** "What tech stack should we use?"
+- **Question:** "Which framework should we use?"
 - **Options:**
-  - `"Vite + React + TypeScript + Supabase (Recommended)"` → sets `STACK=vite`
-  - `"Vite + React + Supabase + shadcn/ui"` → sets `STACK=vite`, `SHADCN_OPTED_IN=true`
-  - `"Next.js 15+ (App Router) + Supabase"` → sets `STACK=next`
-  - `"Consult with tech lead"` → save to Tech Lead Consultation, use Vite default
-- (Other = user types custom stack → sets `STACK=custom`)
+  - `"Vite + React + TypeScript (Recommended)"` → sets `STACK=vite`
+  - `"Next.js 15+ (App Router)"` → sets `STACK=next`
+  - `"Astro"` → sets `STACK=astro`
+- (Other = user types a custom framework → sets `STACK=custom`)
+
+#### 3.5b UI / styling (TECHNICAL)
+
+Tailwind CSS v3 is the baseline for every framework. This question only decides the component layer on top of it.
+
+`AskUserQuestion`:
+- **Question:** "Which UI layer on top of Tailwind?"
+- **Options:**
+  - `"Tailwind + shadcn/ui (Recommended)"` → sets `SHADCN_OPTED_IN=true`
+  - `"Tailwind only"` → sets `SHADCN_OPTED_IN=false`
+- (Other = user types another library, e.g. Base UI / MUI → sets `SHADCN_OPTED_IN=false`; record the choice as a note in `techContext`)
+
+> For `STACK=astro`, shadcn/ui works via React islands — allowed, no special branching.
+
+#### 3.5c Backend / data (TECHNICAL)
+
+`AskUserQuestion`:
+- **Question:** "Backend / data layer?"
+- **Options:**
+  - `"Supabase — Postgres + Auth + Realtime + Storage (Recommended)"` → sets `SUPABASE_OPTED_IN=true`
+  - `"None / frontend-only"` → sets `SUPABASE_OPTED_IN=false`
+- (Other = user types another backend, e.g. Firebase / custom API → sets `SUPABASE_OPTED_IN=false`; record the choice as a note in `techContext`)
 
 #### 3.6 Technical requirements (TECHNICAL)
 
@@ -128,7 +150,7 @@ Store as `INTENSITY_LIMIT`.
 - **Options:**
   - `"I'll describe them"` (Other)
   - `"Use sensible defaults"` (modern browsers, standard security, no special perf targets)
-  - `"Consult with tech lead"`
+  - `"I don't know yet"` (saves to PM Questions)
 
 #### 3.7 Restrictions & considerations (TECHNICAL)
 
@@ -137,7 +159,7 @@ Store as `INTENSITY_LIMIT`.
 - **Options:**
   - `"I'll describe them"` (Other)
   - `"No specific constraints"`
-  - `"Consult with tech lead"`
+  - `"I don't know yet"` (saves to PM Questions)
 
 #### Follow-up handling
 
@@ -201,9 +223,12 @@ Set `OS=mac-linux` or `OS=windows`. Used in Steps 7 and 9.
 Stack-aware templates:
 - `STACK=vite` → use `techContext.vite-react.md`, `systemPatterns.vite-react.md`
 - `STACK=next` → use `techContext.nextjs.md`, `systemPatterns.nextjs.md`
+- `STACK=astro` → use `techContext.astro.md`, `systemPatterns.astro.md`
 - `STACK=custom` → use `techContext.custom.md`, `systemPatterns.custom.md`
 
-If `SHADCN_OPTED_IN=false`, strip the shadcn/ui section from the chosen `systemPatterns` and `techContext`.
+Then strip optional sections based on the §3.5 toggles:
+- If `SHADCN_OPTED_IN=false`, strip the shadcn/ui section from the chosen `systemPatterns` and `techContext`.
+- If `SUPABASE_OPTED_IN=false`, strip the Supabase sections (stack/backend line, deployment, env vars, Supabase patterns, and the RLS security notes) from the chosen `systemPatterns` and `techContext`. Both kinds of section are marked in the templates with an `_only included if ... opted in during setup_` note.
 
 ### 8. Create CLAUDE.md and prompt-reminder hook
 
@@ -256,12 +281,9 @@ Walk through this checklist and report status:
 - [ ] `.mcp.json` exists (if any MCP selected)
 - [ ] `memory-bank/integrations/<name>.md` for each selected MCP
 - [ ] Git initialized
-- [ ] Tech Lead Consultation message generated (if any "Consult with tech lead" responses)
 - [ ] PM Questions list displayed (if any "I don't know" responses)
 
 ### 11. Outputs
-
-If any "Consult with tech lead" responses → render `${CLAUDE_SKILL_DIR}/templates/tech-lead-consultation.md` with collected questions.
 
 If any "I don't know" responses → render `${CLAUDE_SKILL_DIR}/templates/pm-questions.md` with collected questions sorted by Critical / Important / Clarification.
 
@@ -272,7 +294,7 @@ If any "I don't know" responses → render `${CLAUDE_SKILL_DIR}/templates/pm-que
 - `scripts/prompt-reminder.{sh,bat}` plus hook instructions
 - `.mcp.json` (if any MCP selected)
 - Git initialized
-- Optional: Tech Lead Consultation message, PM Questions list
+- Optional: PM Questions list
 
 ## Next step
 

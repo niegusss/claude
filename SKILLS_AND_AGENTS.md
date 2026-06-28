@@ -38,7 +38,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` plus optional 
 |-------|---------|
 | `audit-brief` | Audit an existing brief/scope (a file or a folder of docs) for completeness before building: missing info, missing screens, unclear flows, edge cases and their consequences, contradictions. Interviews the user to fill gaps, then writes an audit report plus a corrected copy. Analysis only — never scaffolds. Invoked with a path: `/audit-brief docs/`. |
 | `setup-project` | Bootstrap a new project: interview, Memory Bank, Git, CLAUDE.md, prompt-reminder hook, MCP servers (Supabase, Context7, Spec Workflow, Netlify, ClickUp). Also adds a single MCP to an existing setup via shortcut argument. |
-| `initial-prompt` | Scaffold the first working page(s) after `setup-project`. Detects stack (Vite + React, Next.js, or custom) from `techContext.md`, bootstraps the project structure if needed, implements the first logical page based on the project brief. |
+| `initial-prompt` | Scaffold the first working page(s) after `setup-project`. Detects stack (Vite + React, Next.js, Astro, or custom) from `techContext.md`, bootstraps the project structure if needed, implements the first logical page based on the project brief. |
 | `fix-bug` | Diagnose and fix one specific bug: locate the suspect code, find the root cause, reproduce it, propose the smallest fix, apply it after confirmation, then verify with tsc/eslint/build. The bug description is the primary input. Invoked with a description: `/fix-bug "login throws 500 on empty email"`. |
 
 ### Skill structure

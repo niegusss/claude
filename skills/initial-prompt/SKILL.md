@@ -2,7 +2,7 @@
 name: initial-prompt
 description: |
   When the user wants to scaffold the first working page(s) of a project after
-  setup-project. Detects the chosen stack (Vite + React, Next.js, or custom)
+  setup-project. Detects the chosen stack (Vite + React, Next.js, Astro, or custom)
   from techContext.md, bootstraps the project structure if needed, and implements
   the first logical page based on the project brief. Use when memory-bank/ exists
   but the project has no working pages yet.
@@ -55,6 +55,7 @@ Single `ls -la`. Capture `PROJECT_STATE`:
 - `empty` — no `package.json`, no source folders → full bootstrap needed
 - `bootstrapped-vite` — `package.json` + `vite.config.ts` + `src/` → skip bootstrap
 - `bootstrapped-next` — `package.json` + `next.config.*` + `app/` → skip bootstrap
+- `bootstrapped-astro` — `package.json` + `astro.config.*` + `src/pages/` → skip bootstrap
 - `partial` — `package.json` exists but doesn't match a known layout → ask the user before proceeding
 
 ### 3. Detect stack
@@ -65,18 +66,21 @@ Read `memory-bank/techContext.md`. Set `STACK`:
 |----------|---------|--------|
 | Vite + React | `vite` | Step 5a |
 | Next.js (any version) | `next` | Step 5b |
-| Other (Vue, Svelte, Remix, Astro, etc.) | `other` | **Stop** with message |
+| Astro | `astro` | Step 5c |
+| Other (Vue, Svelte, Remix, etc.) | `other` | **Stop** with message |
 
 Unsupported stack message:
 
 ```
 Stack [X] detected in techContext.md.
-Currently `initial-prompt` supports Vite+React and Next.js.
+Currently `initial-prompt` supports Vite+React, Next.js, and Astro.
 For [X], bootstrap the project manually using the official starter, then ask
 Claude to implement the first page based on memory-bank/projectbrief.md.
 ```
 
-Also check whether `SHADCN_OPTED_IN` is `true` based on `techContext.md` content (presence of a shadcn/ui section that isn't conditional/stripped).
+Also check `techContext.md` content for two toggles, treating a section as enabled only when it isn't conditional/stripped:
+- `SHADCN_OPTED_IN` — presence of a live shadcn/ui section.
+- `SUPABASE_OPTED_IN` — presence of a live Supabase section.
 
 ### 4. Determine starting point
 
@@ -176,6 +180,55 @@ npx shadcn@latest init
 - Components: `components/ComponentName.tsx` (PascalCase)
 - Server components by default; add `'use client'` only when needed (state, effects, browser APIs)
 
+### 5c. Bootstrap (Astro)
+
+Skip if `PROJECT_STATE` is `bootstrapped-astro`.
+
+If the directory is empty:
+
+```bash
+npm create astro@latest . -- --template minimal --typescript strict --no-git --skip-houston
+```
+
+If the directory has content (e.g. memory-bank/ exists):
+
+```bash
+npm create astro@latest temp-app -- --template minimal --typescript strict --no-git --skip-houston
+shopt -s dotglob 2>/dev/null || setopt dotglob 2>/dev/null
+mv temp-app/* . 2>/dev/null || true
+rmdir temp-app
+```
+
+Then add integrations and icons:
+
+```bash
+npx astro add tailwind --yes
+npx astro add react --yes
+npm install lucide-react
+```
+
+If `SHADCN_OPTED_IN` (shadcn renders as React islands, so the `react` integration above is required):
+
+```bash
+npx shadcn@latest init
+```
+
+If `SUPABASE_OPTED_IN`:
+
+```bash
+npm install @supabase/supabase-js
+```
+
+Create folder structure: `src/pages/`, `src/layouts/`, `src/components/`, `src/styles/`.
+
+**File path rules (Astro):**
+- Routes: `src/pages/<route>.astro` (lowercase; `index.astro` is home, `[param].astro` for dynamic)
+- Layouts: `src/layouts/Layout.astro` (PascalCase)
+- Static components: `src/components/Name.astro`; interactive islands: `src/components/Name.tsx`
+- Hydrate islands explicitly with `client:*` directives — static by default; no leading slashes or `./` in paths.
+
+Jump to **Step 6**.
+
 ### 6. Pre-implementation plan
 
 Derive visual style from `memory-bank/productContext.md` under `## Visual Style`. Translate the style name to concrete tokens:
@@ -220,7 +273,9 @@ Follow the conventions already documented in `memory-bank/systemPatterns.md` and
 
 ### 8. Verify build
 
-Run in order, gate each step on the previous:
+Run in order, gate each step on the previous. Use the sequence for the detected `STACK`:
+
+**`vite` / `next`:**
 
 ```bash
 # 1. Type check (fastest)
@@ -230,6 +285,16 @@ npx tsc --noEmit
 npx eslint . --max-warnings 0
 
 # 3. Final build
+npm run build
+```
+
+**`astro`** (the minimal starter ships no ESLint config; `astro check` covers types + content schemas):
+
+```bash
+# 1. Type + content check
+npx astro check
+
+# 2. Final build
 npm run build
 ```
 
@@ -258,7 +323,7 @@ Created:
 Features implemented:
 - [bulleted list from Step 4]
 
-Build: passed (tsc, eslint, npm run build)
+Build: passed ([tsc + eslint + build] for vite/next, or [astro check + build] for astro)
 
 Next step: run `setup-tests` to add Vitest infrastructure and start TDD.
 The user can also run `npm run dev` to preview.
@@ -266,7 +331,7 @@ The user can also run `npm run dev` to preview.
 
 ## Output
 
-- Project scaffolded (if needed): `package.json`, Vite/Next.js config, source folders
+- Project scaffolded (if needed): `package.json`, Vite/Next.js/Astro config, source folders
 - First page(s) implemented per the project brief
 - `memory-bank/activeContext.md` and `memory-bank/progress.md` updated
 

@@ -3,7 +3,7 @@
 ## Architecture overview
 
 - **Frontend:** SPA, React 18+
-- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage)
+- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage) — _only if Supabase opted in during setup; otherwise frontend-only / client-side storage_
 - **State:** React Context for global state; React Query (TanStack Query) for server state
 - **Routing:** React Router v6+
 
@@ -72,8 +72,8 @@ src/
 - Validate user input at the boundary (form submission, URL params).
 - Sanitize anything that goes into `dangerouslySetInnerHTML`.
 - Use environment variables for keys; never commit them.
-- Supabase RLS on every table that holds user data.
-- HTTPS everywhere; never load Supabase config over HTTP.
+- Supabase RLS on every table that holds user data. _(only if Supabase opted in during setup)_
+- HTTPS everywhere; never load backend config over HTTP.
 
 ## Error handling
 

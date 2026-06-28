@@ -155,10 +155,12 @@ Skip everything else (`model`, `effort`, `context: fork`, `paths`, `arguments`) 
 - No localization branches. If a user needs Polish output, they ask Claude at runtime.
 
 ### Stack assumptions
-- Default: **Vite + React + TypeScript** for new projects.
-- Alternative: **Next.js 15+ (App Router)** detected from `techContext.md`.
-- Other stacks: skill stops with "manual bootstrap required" message.
-- **shadcn/ui**: opt-in, never default. Detected via `techContext.md` or chosen during interview.
+- Stack is chosen as three independent dimensions during the interview: framework, UI layer, backend.
+- Frameworks (first-class, scaffolded by `initial-prompt`): **Vite + React + TypeScript** (default), **Next.js 15+ (App Router)**, **Astro**.
+- Other frameworks → `STACK=custom`; `initial-prompt` stops with "manual bootstrap required" message.
+- Tailwind CSS v3 is the baseline for every framework.
+- **shadcn/ui**: opt-in UI toggle (`SHADCN_OPTED_IN`), never default. For Astro it renders via React islands.
+- **Supabase**: opt-in backend toggle (`SUPABASE_OPTED_IN`); when off, templates strip the Supabase sections (frontend-only).
 
 ### Tone
 - Direct. Imperative voice ("Read the file", not "You should read the file").
