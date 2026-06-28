@@ -30,8 +30,9 @@ This manifest is the source of truth. Every new skill must conform to it. If a r
 
 ## Current skills
 
-1. **`setup-project`** — interview-driven project bootstrap, Memory Bank creation, MCP setup
-2. **`initial-prompt`** — first implementation after setup
+1. **`audit-brief`** — audit an existing brief/scope (file or folder) for completeness; report + corrected copy, analysis only
+2. **`setup-project`** — interview-driven project bootstrap, Memory Bank creation, MCP setup
+3. **`initial-prompt`** — first implementation after setup
 
 ## Planned (in likely order)
 

@@ -7,6 +7,7 @@ A curated set of Claude Code **skills**, **agents**, and a production-grade **se
 ## What's inside
 
 - **Skills** (`skills/`) — auto-invoked Claude Code skills with structured directories (`SKILL.md` + optional `templates/`, `scripts/`, `examples/`).
+  - `audit-brief` — audits an existing brief/scope (a file or a folder of docs) for completeness before building: missing info, missing screens, unclear flows, edge cases and their consequences, contradictions. Interviews you to fill gaps, then writes an audit report plus a corrected copy. Analysis only — never scaffolds. Invoked with a path: `/audit-brief docs/`.
   - `setup-project` — interview-driven project bootstrap: Memory Bank, Git, CLAUDE.md, prompt-reminder hook, MCP servers (Supabase, Context7, Spec Workflow, Netlify, ClickUp).
   - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React or Next.js, bootstraps if needed, implements based on `projectbrief.md`.
 - **Agents** (`agents/`) — 7 specialized subagents (`code-reviewer`, `quick-lint`, `dep-analyzer`, `test-case-generator`, `memory-bank-sync`, `adr-generator`, `security-scanner`).
@@ -49,7 +50,13 @@ After installing, **restart Claude Code** so it picks up the new skills.
 
 ## Quick start
 
-After installing, in Claude Code:
+After installing, in Claude Code. If you already have a brief or scope document, audit it first:
+
+```
+/audit-brief brief.md
+```
+
+Checks the brief for completeness, interviews you on the gaps, and writes a corrected copy — analysis only, it won't build anything. Then start the project:
 
 ```
 /setup-project
@@ -91,6 +98,7 @@ You can also let Claude auto-invoke a skill — say "set up a new project" and i
 ├── install.sh                  # macOS / Linux installer
 ├── install.ps1                 # Windows installer
 ├── skills/                     # auto-invoked Claude Code skills
+│   ├── audit-brief/
 │   ├── setup-project/
 │   └── initial-prompt/
 ├── agents/                     # specialized subagents
