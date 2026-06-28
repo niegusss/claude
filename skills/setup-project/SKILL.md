@@ -6,7 +6,7 @@ description: |
   Context7, Spec Workflow, Netlify, ClickUp) to an existing setup via a single-argument
   shortcut. Conducts a structured interview, scaffolds memory-bank/, initializes Git,
   configures MCP, and sets up a prompt-reminder hook.
-allowed-tools: Read, Write, Edit, Bash(npm *), Bash(npx *), Bash(git *), Bash(mkdir *), Bash(uname *), Bash(ls *), Bash(cat *), Bash(chmod *), Bash(cp *)
+allowed-tools: Read, Write, Edit, AskUserQuestion, Bash(npm *), Bash(npx *), Bash(git *), Bash(mkdir *), Bash(uname *), Bash(ls *), Bash(cat *), Bash(chmod *), Bash(cp *)
 ---
 
 # setup-project

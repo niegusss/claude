@@ -6,7 +6,7 @@ description: |
   from techContext.md, bootstraps the project structure if needed, and implements
   the first logical page based on the project brief. Use when memory-bank/ exists
   but the project has no working pages yet.
-allowed-tools: Read, Write, Edit, Bash(npm *), Bash(npx *), Bash(git *), Bash(ls *), Bash(mkdir *), Bash(mv *), Bash(chmod *), Bash(cat *), Bash(shopt *), Bash(setopt *)
+allowed-tools: Read, Write, Edit, AskUserQuestion, Bash(npm *), Bash(npx *), Bash(git *), Bash(ls *), Bash(mkdir *), Bash(mv *), Bash(chmod *), Bash(cat *), Bash(shopt *), Bash(setopt *)
 ---
 
 # initial-prompt
@@ -248,7 +248,7 @@ Plan:
 - Page(s): [list]
 - Visual: [style] → [colors, fonts, radii in 1 line]
 - Components: [list]
-- Animations: [if any — Framer Motion targets]
+- Animations: [if any — Framer Motion targets for vite/next; CSS / View Transitions for astro]
 ```
 
 Then `AskUserQuestion`:
@@ -265,7 +265,7 @@ Follow the conventions already documented in `memory-bank/systemPatterns.md` and
 - Write complete, runnable code. No `// TODO` placeholders.
 - TypeScript strict; explicit prop interfaces.
 - Tailwind utility classes; design tokens defined once and reused.
-- Framer Motion sparingly — `ease-out` for appearing, target specific properties (never `transition: all`).
+- Animate sparingly — `ease-out` for appearing, target specific properties (never `transition: all`). Use Framer Motion for vite/next; for astro prefer CSS / View Transitions and reserve JS animation for hydrated islands.
 - Buttons get `:active` `scale(0.97)` for tactile feel.
 - Loading and error states for every async boundary.
 - Lucide React for icons. shadcn/ui components only if `SHADCN_OPTED_IN`.
@@ -325,7 +325,7 @@ Features implemented:
 
 Build: passed ([tsc + eslint + build] for vite/next, or [astro check + build] for astro)
 
-Next step: run `setup-tests` to add Vitest infrastructure and start TDD.
+Next step: once available, run `setup-tests` to add Vitest infrastructure and start TDD.
 The user can also run `npm run dev` to preview.
 ```
 
@@ -337,4 +337,4 @@ The user can also run `npm run dev` to preview.
 
 ## Next step
 
-After this, the user typically runs the `setup-tests` skill to add testing infrastructure.
+After this, the user typically adds testing infrastructure — via the `setup-tests` skill once it's available, or manually (Vitest) in the meantime.
