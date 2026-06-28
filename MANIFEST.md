@@ -33,6 +33,7 @@ This manifest is the source of truth. Every new skill must conform to it. If a r
 1. **`audit-brief`** — audit an existing brief/scope (file or folder) for completeness; report + corrected copy, analysis only
 2. **`setup-project`** — interview-driven project bootstrap, Memory Bank creation, MCP setup
 3. **`initial-prompt`** — first implementation after setup
+4. **`fix-bug`** — targeted single-bug debugging: locate → root cause → reproduce → propose-and-confirm fix → verify → Memory Bank update
 
 ## Planned (in likely order)
 

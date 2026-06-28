@@ -10,6 +10,7 @@ A curated set of Claude Code **skills**, **agents**, and a production-grade **se
   - `audit-brief` — audits an existing brief/scope (a file or a folder of docs) for completeness before building: missing info, missing screens, unclear flows, edge cases and their consequences, contradictions. Interviews you to fill gaps, then writes an audit report plus a corrected copy. Analysis only — never scaffolds. Invoked with a path: `/audit-brief docs/`.
   - `setup-project` — interview-driven project bootstrap: Memory Bank, Git, CLAUDE.md, prompt-reminder hook, MCP servers (Supabase, Context7, Spec Workflow, Netlify, ClickUp).
   - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React or Next.js, bootstraps if needed, implements based on `projectbrief.md`.
+  - `fix-bug` — diagnoses and fixes one specific bug: locates the suspect code, finds the root cause, reproduces it, proposes the smallest fix, applies it after confirmation, then verifies with tsc/eslint/build. Invoked with a description: `/fix-bug "login throws 500 on empty email"`.
 - **Agents** (`agents/`) — 7 specialized subagents (`code-reviewer`, `quick-lint`, `dep-analyzer`, `test-case-generator`, `memory-bank-sync`, `adr-generator`, `security-scanner`).
 - **Docs** (`docs/`) — long-form guides referenced from skills (e.g. Spec Workflow tutorial).
 - **`SECURITY.md`** — 2189-line checklist (P0/P1/P2) for React + TypeScript + Supabase projects. 17 categories from secrets and RLS through CSP, CORS, rate limiting, file uploads, IDOR, and production debug hygiene.
@@ -100,7 +101,8 @@ You can also let Claude auto-invoke a skill — say "set up a new project" and i
 ├── skills/                     # auto-invoked Claude Code skills
 │   ├── audit-brief/
 │   ├── setup-project/
-│   └── initial-prompt/
+│   ├── initial-prompt/
+│   └── fix-bug/
 ├── agents/                     # specialized subagents
 └── docs/                       # long-form guides
 ```
