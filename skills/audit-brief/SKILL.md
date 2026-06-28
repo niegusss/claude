@@ -9,7 +9,7 @@ description: |
   correction only — it never scaffolds or builds the project. Trigger phrases: "audit my
   brief", "check this scope", "is my spec complete", "review my project brief",
   "/audit-brief <file-or-folder>".
-allowed-tools: Read, Write, Bash(ls *), Bash(find *)
+allowed-tools: Read, Write, AskUserQuestion, Bash(ls *), Bash(find *), Bash(mkdir *)
 ---
 
 # audit-brief
@@ -73,12 +73,12 @@ Keep it tight: ask only about gaps that materially change scope. Skip cosmetic g
 
 ### 5. Produce outputs (non-destructive)
 
-Derive `STEM` from `PRIMARY` (e.g. `brief.md` → `brief`). Write two files next to the input:
+Derive `STEM` from `PRIMARY` (e.g. `brief.md` → `brief`). Create a new folder `<STEM>-audit/` next to the input (`mkdir -p`) and write two files into it:
 
-1. `<STEM>.audit.md` — the report, from `${CLAUDE_SKILL_DIR}/templates/audit-report.md`. Includes the per-dimension completeness table, missing screens, edge cases with consequences, contradictions, and open questions.
-2. `<STEM>.reviewed.md` — the corrected brief: the original content, restructured and augmented with everything resolved during the interview. Mark inserted/changed sections with a short `> added during audit` note so the diff is visible.
+1. `<STEM>-audit/report.md` — the report, from `${CLAUDE_SKILL_DIR}/templates/audit-report.md`. Includes the per-dimension completeness table, missing screens, edge cases with consequences, contradictions, and open questions.
+2. `<STEM>-audit/reviewed.md` — the corrected brief: the original content, restructured and augmented with everything resolved during the interview. Mark inserted/changed sections with a short `> added during audit` note so the diff is visible.
 
-If either filename already exists, confirm with `AskUserQuestion` before overwriting.
+Keeping outputs in their own folder leaves the originals untouched and the audit self-contained. If the folder already exists, confirm with `AskUserQuestion` before overwriting its files.
 
 For the depth and tone of a good report — missing screens, edge cases with consequences, a surfaced contradiction, and resolved vs. open questions — anchor on `${CLAUDE_SKILL_DIR}/examples/quick-notes-audit.md`.
 
@@ -88,16 +88,16 @@ Report: overall completeness (e.g. "6/8 dimensions complete"), the count of reso
 
 ## Output
 
-- `<STEM>.audit.md` — completeness report (rubric table, missing screens, edge cases + consequences, contradictions, open questions).
-- `<STEM>.reviewed.md` — corrected and augmented copy of the brief.
+- `<STEM>-audit/report.md` — completeness report (rubric table, missing screens, edge cases + consequences, contradictions, open questions).
+- `<STEM>-audit/reviewed.md` — corrected and augmented copy of the brief.
 - Originals and `memory-bank/` are untouched.
 
 ## Examples
 
-1. `/audit-brief project-brief.md` → reads one file, interviews on 3 gaps, writes `project-brief.audit.md` + `project-brief.reviewed.md`.
+1. `/audit-brief project-brief.md` → reads one file, interviews on 3 gaps, writes `project-brief-audit/report.md` + `project-brief-audit/reviewed.md`.
 2. `/audit-brief docs/` → reads all `.md`/`.txt` under `docs/`, flags a contradiction between two files, writes outputs named from the primary doc.
 3. `/audit-brief` (no arg) → scans the working dir, asks which candidate to audit, then proceeds.
 
 ## Next step
 
-After this, the user typically runs the `setup-project` skill, feeding it the `.reviewed.md` brief.
+After this, the user typically runs the `setup-project` skill, feeding it the `<STEM>-audit/reviewed.md` brief.

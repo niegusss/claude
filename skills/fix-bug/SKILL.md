@@ -9,7 +9,7 @@ description: |
   bug", "this is broken", "why does X fail", "diagnose this error", "track down the root
   cause", "login throws 500", "/fix-bug <description>". NOT for open-ended "find all the
   bugs" scans (that's the code-reviewer agent) or security audits (security-scanner).
-allowed-tools: Read, Edit, Grep, Glob, Bash(npm *), Bash(npx *), Bash(git *)
+allowed-tools: Read, Edit, Grep, Glob, AskUserQuestion, Bash(npm *), Bash(npx *), Bash(git *)
 ---
 
 # fix-bug
@@ -64,12 +64,12 @@ After confirmation, edit with `Edit`. Make the smallest change that fixes the ca
 
 ### 8. Verify
 
-Run in sequence, each gating the next:
-1. `npx tsc --noEmit`
-2. `npx eslint . --max-warnings 0`
-3. `npm run build`
+Run only the checks the project actually has — skip any that don't apply, and never treat a missing tool or script as a failure:
+1. `npx tsc --noEmit` — only if a `tsconfig.json` exists.
+2. `npx eslint . --max-warnings 0` — only if an ESLint config exists (`.eslintrc*`, `eslint.config.*`, or an `eslintConfig` key in `package.json`).
+3. `npm run build` — only if `package.json` defines a `build` script.
 
-On failure, fix or report. Don't run `npm run dev` — the user does.
+Run the applicable checks in sequence, each gating the next. On a genuine failure, fix or report. Don't run `npm run dev` — the user does.
 
 ### 9. Update Memory Bank
 

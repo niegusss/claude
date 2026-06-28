@@ -26,7 +26,7 @@ This brief reads fine at a glance. The audit is where the holes show.
 
 ---
 
-## Output — `quick-notes.audit.md`
+## Output — `quick-notes-audit/report.md`
 
 # Brief audit — quick-notes.md
 
@@ -83,13 +83,13 @@ Sources: quick-notes.md
 Not yet ready for `setup-project`. The sync-vs-accounts contradiction must be closed
 first — it determines whether this is a local-only app or a synced one, which changes
 the data model, the screens, and half the edge cases. Once decided, the corrected
-`quick-notes.reviewed.md` is buildable.
+`quick-notes-audit/reviewed.md` is buildable.
 
 ---
 
 ## What the reviewed copy adds
 
-`quick-notes.reviewed.md` keeps the original text and folds in the resolved items,
+`quick-notes-audit/reviewed.md` keeps the original text and folds in the resolved items,
 each flagged so the diff is visible — e.g.:
 
 > ## Screens

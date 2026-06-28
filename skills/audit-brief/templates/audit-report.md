@@ -1,7 +1,7 @@
-# Brief audit — {{PRIMARY_NAME}}
+# Brief audit — [PRIMARY_NAME]
 
-Audited: {{DATE}}
-Sources: {{LIST_OF_FILES}}
+Audited: [DATE]
+Sources: [LIST_OF_FILES]
 
 ## Completeness
 
@@ -16,35 +16,35 @@ Sources: {{LIST_OF_FILES}}
 | Constraints | … | … |
 | Consistency | … | … |
 
-**Overall:** {{N}}/8 dimensions complete.
+**Overall:** [N]/8 dimensions complete.
 
 ## Missing screens / views
 
 Screens implied by the flows but never described:
 
-- **{{Screen}}** — needed for {{flow}}; brief never defines its content or states.
+- **[SCREEN]** — needed for [FLOW]; brief never defines its content or states.
 
 ## Edge cases
 
 Each case names the situation and the consequence the product must handle.
 
-- **{{Case}}** → {{required behaviour}}.
+- **[CASE]** → [REQUIRED_BEHAVIOUR].
 
 ## Contradictions
 
-- {{File A}} says X; {{File B}} says Y. Resolution: {{decision or open}}.
+- [FILE_A] says X; [FILE_B] says Y. Resolution: [DECISION_OR_OPEN].
 
 ## Resolved during audit
 
-Answers captured in the interview, now folded into `<STEM>.reviewed.md`:
+Answers captured in the interview, now folded into `<STEM>-audit/reviewed.md`:
 
-- {{Question}} → {{answer}}.
+- [QUESTION] → [ANSWER].
 
 ## Open questions
 
 Unresolved gaps (answered "I don't know yet"). Not blockers, but decide before build:
 
-- {{Question}}.
+- [QUESTION].
 
 ## Recommendation
 
