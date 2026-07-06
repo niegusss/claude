@@ -22,7 +22,8 @@ Audit an existing brief/scope (file or folder) for completeness, then produce a 
 - Invoked with a path: `/audit-brief docs/` or `/audit-brief brief.md`.
 - The user asks "is my spec complete?", "what's missing from this brief?", "find edge cases I forgot".
 
-Don't use when:
+## Don't use when
+
 - The user wants to *build* from the brief → that's `setup-project` / `initial-prompt`.
 - There is no document to audit yet → the user should write or dictate one first.
 

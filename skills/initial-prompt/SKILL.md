@@ -5,8 +5,12 @@ description: |
   setup-project. Detects the chosen stack (Vite + React, Next.js, Astro, or custom)
   from techContext.md, bootstraps the project structure if needed, and implements
   the first logical page based on the project brief. Use when memory-bank/ exists
-  but the project has no working pages yet.
-allowed-tools: Read, Write, Edit, AskUserQuestion, Bash(npm *), Bash(npx *), Bash(git *), Bash(ls *), Bash(mkdir *), Bash(mv *), Bash(chmod *), Bash(cat *), Bash(shopt *), Bash(setopt *)
+  but the project has no working pages yet. Trigger phrases: "create the first page",
+  "scaffold the app", "implement the first screen", "start building",
+  "/initial-prompt <starting-point>". NOT for adding features to an already-built
+  app (ask for the specific feature instead) or for project setup itself (that's
+  the setup-project skill).
+allowed-tools: Read, Write, Edit, AskUserQuestion, Bash(npm *), Bash(npx *), Bash(ls *), Bash(mkdir *), Bash(mv *), Bash(rmdir *), Bash(shopt *), Bash(setopt *)
 ---
 
 # initial-prompt
@@ -19,9 +23,10 @@ Scaffold the first working page(s) after `setup-project`, using the project brie
 - The project has no `package.json` yet (full scaffolding) OR has it but no pages yet
 - The user asks "create the first page", "scaffold the app", or similar
 
-Do not use if:
-- `memory-bank/` does not exist → run `setup-project` first
-- The project is already partially built with features → ask the user to request a specific feature instead
+## Don't use when
+
+- `memory-bank/` does not exist → that's the `setup-project` skill, run it first.
+- The project is already partially built with features → ask the user to request a specific feature instead.
 
 ## Prerequisites
 
@@ -81,6 +86,8 @@ Claude to implement the first page based on memory-bank/projectbrief.md.
 Also check `techContext.md` content for two toggles, treating a section as enabled only when it isn't conditional/stripped:
 - `SHADCN_OPTED_IN` — presence of a live shadcn/ui section.
 - `SUPABASE_OPTED_IN` — presence of a live Supabase section.
+
+If `PROJECT_STATE` is `bootstrapped-*` for a different stack than `STACK` (e.g. `bootstrapped-next` with `STACK=vite`), treat it as `partial`: stop and ask the user how to proceed before any bootstrap.
 
 ### 4. Determine starting point
 
@@ -179,6 +186,8 @@ npx shadcn@latest init
 - Layouts: `app/layout.tsx` (root), nested `layout.tsx` per route
 - Components: `components/ComponentName.tsx` (PascalCase)
 - Server components by default; add `'use client'` only when needed (state, effects, browser APIs)
+
+Jump to **Step 6**.
 
 ### 5c. Bootstrap (Astro)
 
@@ -334,6 +343,12 @@ The user can also run `npm run dev` to preview.
 - Project scaffolded (if needed): `package.json`, Vite/Next.js/Astro config, source folders
 - First page(s) implemented per the project brief
 - `memory-bank/activeContext.md` and `memory-bank/progress.md` updated
+
+## Examples
+
+1. `/initial-prompt` in a directory with only `memory-bank/` → bootstraps the stack from `techContext.md`, proposes a starting point, implements it, verifies the build.
+2. `/initial-prompt landing page` → skips the starting-point question, scaffolds if needed, implements the landing page.
+3. `/initial-prompt` with an unsupported stack in `techContext.md` → stops with the manual-bootstrap message from Step 3.
 
 ## Next step
 

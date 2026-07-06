@@ -63,7 +63,7 @@ memory-bank/
 └── progress.md         # Done, in progress, known issues
 ```
 
-Every new skill reads Memory Bank at session start and updates `activeContext.md` / `progress.md` after significant work. No exceptions, no alternatives.
+Every skill that works inside a bootstrapped project reads Memory Bank at session start and updates `activeContext.md` / `progress.md` after significant work. Skills that run before `setup-project` (e.g. `audit-brief`) read `memory-bank/` only if it exists and never write to it. No other exceptions, no alternatives.
 
 ---
 
@@ -89,7 +89,7 @@ Each skill is a directory. Resources referenced from `SKILL.md` via `${CLAUDE_SK
 
 ## SKILL.md structure (template)
 
-Every skill follows this shape. Target: **`SKILL.md` under 200 lines**; resources unlimited but loaded on demand.
+Every skill follows this shape. Target: **`SKILL.md` under 200 lines**; resources unlimited but loaded on demand. Exception: interview/bootstrap skills whose flows must stay inline and deterministic (`setup-project`, `initial-prompt`) may exceed the target — never pad other skills toward it.
 
 ```markdown
 ---
@@ -107,11 +107,22 @@ One-sentence purpose statement.
 
 ## When to use
 
-3–4 bullet points covering trigger conditions. Optionally "Don't use when" line.
+3–4 bullet points covering trigger conditions.
+
+## Don't use when
+
+Bullets pointing at the correct alternative: "... → that's `<other-skill>`". Skip section if none.
 
 ## Prerequisites
 
 Hard requirements only. Skip section if none.
+
+## Interaction style
+
+Use `AskUserQuestion` for every user decision. Interview questions offer the standard
+option pair: `"I'll describe it"` (answer via the Other field) and `"I don't know yet"`
+(record as an open question, apply a sensible default, continue). Plain text prompts
+only when the user must paste long content.
 
 ## Flow
 
@@ -183,7 +194,7 @@ Skip everything else (`model`, `effort`, `context: fork`, `paths`, `arguments`) 
 2. `npx eslint . --max-warnings 0`
 3. `npm run build`
 
-Each step gates the next. Don't run `npm run dev` — the user does.
+Each step gates the next, and runs only if its tool is configured in the project (`tsconfig.json`, an ESLint config, a `build` script) — a missing tool is a skip, not a failure. Astro projects without ESLint: `npx astro check` replaces steps 1–2. Don't run `npm run dev` — the user does.
 
 ### Resource references
 - Templates / examples in `${CLAUDE_SKILL_DIR}/templates/`, `${CLAUDE_SKILL_DIR}/examples/`.

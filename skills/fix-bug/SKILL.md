@@ -28,6 +28,12 @@ Diagnose and fix a single, specific bug: locate it, find the root cause, reprodu
 - The user wants a security audit → that's the `security-scanner` agent.
 - The user asks whether a brief/spec is complete → that's the `audit-brief` skill.
 
+## Non-goals
+
+- One bug at a time — not an open-ended scan.
+- Not a security audit.
+- Does not scaffold, add features, or refactor beyond the fix.
+
 ## Interaction style
 
 Use `AskUserQuestion` for every decision — clarifying the symptom and confirming the fix. Reserve plain text only when the user must paste long content (a log, a stack trace, a full error).
@@ -74,12 +80,6 @@ Run the applicable checks in sequence, each gating the next. On a genuine failur
 ### 9. Update Memory Bank
 
 Update `activeContext.md` (what was fixed) and `progress.md` (move the item from known issues to done). Skip if `memory-bank/` doesn't exist.
-
-## Non-goals
-
-- One bug at a time — not an open-ended scan.
-- Not a security audit.
-- Does not scaffold, add features, or refactor beyond the fix.
 
 ## Output
 

@@ -5,8 +5,11 @@ description: |
   a Claude Code workspace from scratch. Also handles adding an MCP server (Supabase,
   Context7, Spec Workflow, Netlify, ClickUp) to an existing setup via a single-argument
   shortcut. Conducts a structured interview, scaffolds memory-bank/, initializes Git,
-  configures MCP, and sets up a prompt-reminder hook.
-allowed-tools: Read, Write, Edit, AskUserQuestion, Bash(npm *), Bash(npx *), Bash(git *), Bash(mkdir *), Bash(uname *), Bash(ls *), Bash(cat *), Bash(chmod *), Bash(cp *)
+  configures MCP, and sets up a prompt-reminder hook. Trigger phrases: "set up this
+  project", "start a new project", "create a memory bank", "add the Supabase MCP",
+  "/setup-project", "/setup-project supabase". NOT for auditing an existing brief
+  (that's the audit-brief skill) or implementing pages (that's initial-prompt).
+allowed-tools: Read, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(uname *), Bash(ls *), Bash(chmod *), Bash(cp *)
 ---
 
 # setup-project
@@ -19,7 +22,11 @@ Bootstrap a new project with Memory Bank, Git, CLAUDE.md, prompt-reminder hook, 
 - The user wants to add an MCP server to an existing setup (use argument shortcut)
 - The user explicitly asks "set up Claude Code in this project"
 
-Do not use if `memory-bank/` already exists AND no argument was given — ask whether to redo (destructive) or add a specific MCP server instead.
+## Don't use when
+
+- `memory-bank/` already exists and no argument was given → ask whether to redo (destructive) or add a specific MCP server via a shortcut instead.
+- The user wants an existing brief checked for completeness → that's the `audit-brief` skill.
+- The user wants the first pages implemented → that's the `initial-prompt` skill.
 
 ## Argument shortcuts (`$ARGUMENTS`)
 
@@ -287,7 +294,7 @@ Walk through this checklist and report status:
 
 If any "I don't know" responses → render `${CLAUDE_SKILL_DIR}/templates/pm-questions.md` with collected questions sorted by Critical / Important / Clarification.
 
-## Output (summary)
+## Output
 
 - `memory-bank/` with 7 core files + `integrations/` folder
 - `CLAUDE.md` at project root
@@ -295,6 +302,12 @@ If any "I don't know" responses → render `${CLAUDE_SKILL_DIR}/templates/pm-que
 - `.mcp.json` (if any MCP selected)
 - Git initialized
 - Optional: PM Questions list
+
+## Examples
+
+1. `/setup-project` in an empty directory → full interview, Memory Bank, Git init, CLAUDE.md, prompt-reminder hook, optional MCPs.
+2. `/setup-project supabase` → skips the interview, adds only the Supabase MCP to `.mcp.json`, then exits.
+3. `/setup-project` where `memory-bank/` already exists → asks whether to redo (destructive) or add an MCP via a shortcut instead.
 
 ## Next step
 
