@@ -12,7 +12,7 @@ A curated set of Claude Code **skills**, **agents**, and a production-grade **se
   - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React, Next.js, or Astro, bootstraps if needed, implements based on `projectbrief.md`.
   - `fix-bug` — diagnoses and fixes one specific bug: locates the suspect code, finds the root cause, reproduces it, proposes the smallest fix, applies it after confirmation, then verifies with tsc/eslint/build. Invoked with a description: `/fix-bug "login throws 500 on empty email"`.
 - **Agents** (`agents/`) — 7 specialized subagents (`code-reviewer`, `quick-lint`, `dep-analyzer`, `test-case-generator`, `memory-bank-sync`, `adr-generator`, `security-scanner`).
-- **Docs** (`docs/`) — long-form guides referenced from skills (e.g. Spec Workflow tutorial).
+- **Docs** (`docs/`) — long-form guides referenced from skills (e.g. Spec Workflow tutorial), plus the working-method and skill-authoring quality docs (`fable-mindset.md`, `fable-skill-authoring.md`).
 - **`SECURITY.md`** — 2189-line checklist (P0/P1/P2) for React + TypeScript + Supabase projects. 17 categories from secrets and RLS through CSP, CORS, rate limiting, file uploads, IDOR, and production debug hygiene.
 
 ---
@@ -83,6 +83,8 @@ You can also let Claude auto-invoke a skill — say "set up a new project" and i
 | [`MANIFEST.md`](./MANIFEST.md) | Skill authors — design spec, conventions, anti-patterns |
 | [`SECURITY.md`](./SECURITY.md) | Every project — pre-deploy security checklist |
 | [`agents/README.md`](./agents/README.md) | Agent details and invocation patterns |
+| [`docs/fable-mindset.md`](./docs/fable-mindset.md) | Models executing tasks — general thinking & working method |
+| [`docs/fable-skill-authoring.md`](./docs/fable-skill-authoring.md) | Skill/agent authors — quality bar complementing `MANIFEST.md` |
 | [`docs/spec-workflow-guide.md`](./docs/spec-workflow-guide.md) | Spec Workflow MCP usage guide |
 
 ---
