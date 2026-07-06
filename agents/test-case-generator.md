@@ -2,7 +2,7 @@
 name: test-case-generator
 description: Use this agent to generate test case checklists for manual and automated testing. Run after new feature implementation or file changes to ensure comprehensive test coverage.\n\nExamples:\n\n<example>\nContext: User just implemented a new feature\nuser: "Generate test cases for my new login form"\nassistant: "I'll use the test-case-generator agent to create comprehensive test cases."\n<Task tool call to test-case-generator>\n</example>\n\n<example>\nContext: After modifying API endpoints\nuser: "What tests should I write for these changes?"\nassistant: "Let me generate test cases covering happy paths, edge cases, and error scenarios."\n<Task tool call to test-case-generator>\n</example>
 model: inherit
-allowed-tools: Read, Grep, Glob, Bash(git diff *), Bash(git log *)
+allowed-tools: Read, Grep, Glob, Bash(git diff*), Bash(git log*)
 ---
 
 You are a Test Case Generator Agent, designed to automatically generate comprehensive test case checklists for manual and automated testing based on code changes.

@@ -27,6 +27,7 @@ All agents use YAML frontmatter format:
 name: agent-name
 description: Description with examples showing when to invoke the agent.\n\nExamples:\n\n<example>\nContext: [situation]\nuser: "[user message]"\nassistant: "[assistant response]"\n<Task tool call to agent-name>\n</example>
 model: inherit
+allowed-tools: Read, Grep, Glob, Bash(git diff*), Bash(git log*)
 ---
 
 [Agent prompt/instructions body]
@@ -39,6 +40,7 @@ model: inherit
 | `name` | Agent identifier (used in Task tool calls) |
 | `description` | When/why to use, with XML examples |
 | `model` | Model to use (inherit, sonnet, opus, haiku) |
+| `allowed-tools` | Only what the job needs; read-only agents get no Write/Edit; Bash restricted to globs |
 | Body | Full agent instructions and persona |
 
 ---
@@ -120,5 +122,7 @@ Skills handle workflows end-to-end (interview → scaffold → implement); agent
    - Clear `name` identifier (matches the file name without `.md`)
    - `description` with `<example>` blocks showing usage
    - `model: inherit` (or specify `sonnet` / `opus` / `haiku`)
-   - Agent prompt body with identity, responsibilities, and output format
+   - `allowed-tools` restricted to what the job needs (no Write/Edit for read-only agents)
+   - Agent prompt body with identity, responsibilities, output format, and edge-case handling
+   - No instructions that assume a dialog — agents run in isolation and return one report; they cannot ask the user questions
 4. Update this README with the new agent
