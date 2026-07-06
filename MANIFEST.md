@@ -54,7 +54,7 @@ The 7-file Memory Bank stays **unchanged**:
 
 ```
 memory-bank/
-├── handbook.md         # Development standards
+├── handbook.md         # Rules for working with Memory Bank (read first)
 ├── projectbrief.md     # Requirements, user flows, features
 ├── techContext.md      # Stack, setup commands, conventions
 ├── productContext.md   # Why, user vision, success metrics

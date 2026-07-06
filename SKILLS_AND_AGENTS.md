@@ -14,7 +14,8 @@ agents/             Specialized subagents
 docs/               Long-form guides linked from skills
 SECURITY.md         Production security checklist
 MANIFEST.md         Design spec for skill authors
-install.sh          One-line installer for end users
+install.sh          One-line installer (macOS / Linux)
+install.ps1         One-line installer (Windows)
 ```
 
 ---
@@ -99,7 +100,7 @@ curl -fsSL https://raw.githubusercontent.com/niegusss/claude/main/install.sh | b
 irm https://raw.githubusercontent.com/niegusss/claude/main/install.ps1 | iex
 ```
 
-Both installers clone the repo and copy `skills/`, `agents/`, `docs/`, `MANIFEST.md`, `SKILLS_AND_AGENTS.md`, and `SECURITY.md` into `~/.claude/` (macOS / Linux) or `%USERPROFILE%\.claude\` (Windows). Existing files in the target directory are left in place.
+Both installers clone the repo and copy `skills/`, `agents/`, `docs/`, `MANIFEST.md`, `SKILLS_AND_AGENTS.md`, and `SECURITY.md` into `~/.claude/` (macOS / Linux) or `%USERPROFILE%\.claude\` (Windows). Files outside that whitelist are left untouched; whitelisted items are overwritten with the latest version on re-install.
 
 Requirements: `git` available in PATH.
 

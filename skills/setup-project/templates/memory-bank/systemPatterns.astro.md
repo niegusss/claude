@@ -4,7 +4,7 @@
 
 - **Frontend:** Astro 5+, islands architecture (zero JS by default)
 - **Interactivity:** React islands via `@astrojs/react`, hydrated with `client:*` directives
-- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage) — _Supabase only if opted in during setup; otherwise static / frontend-only_
+- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage) — _only included if Supabase opted in during setup; otherwise static / frontend-only_
 - **Routing:** File-based via `src/pages/`
 
 ## Folder structure
@@ -16,7 +16,7 @@ src/
   components/       # .astro components (static) + .tsx islands (interactive)
   content/          # Content collections (Markdown/MDX)
   content.config.ts # Collection schemas (zod)
-  lib/              # Helpers; supabase clients — only if Supabase opted in
+  lib/              # Helpers; supabase clients — only included if Supabase opted in during setup
   styles/
     global.css      # Tailwind directives
 public/             # Static assets
@@ -61,7 +61,7 @@ _Only applies to interactive `.tsx` islands._
 - Responsive everywhere (mobile-first or tablet-first depending on user base).
 - Loading states with skeletons inside islands that fetch.
 - Lucide for icons.
-- **shadcn/ui** components (as React islands) when the user opted in during setup. Otherwise, write components from scratch with Tailwind.
+- **shadcn/ui** components (as React islands) — _only included if user opted in during setup; otherwise write components from scratch with Tailwind_
 
 ## Code quality
 
@@ -77,7 +77,7 @@ _Only applies to interactive `.tsx` islands._
 - Sanitize anything injected as raw HTML (`set:html`).
 - Use environment variables for keys; never commit them. Only `PUBLIC_`-prefixed vars reach the client.
 - HTTPS everywhere; never load backend config over HTTP.
-- _Supabase only (if opted in during setup):_ keep the service-role key server-side; enable RLS on every table that holds user data.
+- _Supabase security, only included if Supabase opted in during setup:_ keep the service-role key server-side; enable RLS on every table that holds user data.
 
 ## Error handling
 

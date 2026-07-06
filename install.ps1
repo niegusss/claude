@@ -65,7 +65,15 @@ try {
     foreach ($name in $InstallItems) {
         $src = Join-Path $tempDir $name
         if (Test-Path $src) {
-            Copy-Item -Path $src -Destination $Target -Recurse -Force
+            $dest = Join-Path $Target $name
+            if ((Get-Item $src).PSIsContainer) {
+                # Merge directory contents explicitly — mirrors `cp -a` in
+                # install.sh and avoids Copy-Item's nesting quirks on re-runs.
+                New-Item -ItemType Directory -Path $dest -Force | Out-Null
+                Copy-Item -Path (Join-Path $src '*') -Destination $dest -Recurse -Force
+            } else {
+                Copy-Item -Path $src -Destination $dest -Force
+            }
             $copied += $name
         } else {
             $missing += $name

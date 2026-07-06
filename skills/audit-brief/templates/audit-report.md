@@ -28,7 +28,7 @@ Screens implied by the flows but never described:
 
 Each case names the situation and the consequence the product must handle.
 
-- **[CASE]** → [REQUIRED_BEHAVIOUR].
+- **[CASE]** → [REQUIRED_BEHAVIOR].
 
 ## Contradictions
 

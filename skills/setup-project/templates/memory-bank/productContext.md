@@ -16,11 +16,11 @@
 
 ### Our differentiator
 
-[2-3 sentences on what makes this project worth building given that alternatives exist. Be specific — not "better UX" but "single-tap availability updates vs. multi-step reservation flows".]
+[2-3 sentences on what makes this project worth building given that alternatives exist. Be specific — not "better UX" but a concrete capability the alternatives lack, e.g. "one-tap status updates vs. multi-step forms".]
 
 ## User experience goals
 
-- [GOAL_1] — e.g., "Guest sees table availability in under 3 seconds from app open"
+- [GOAL_1] — e.g., "User reaches the core content within seconds of opening the app"
 - [GOAL_2]
 - [GOAL_3]
 

@@ -11,7 +11,7 @@ Companion document: `docs/fable-skill-authoring.md` (applying this mindset to wr
 The single largest quality gap between models is not intelligence — it is how much they act on assumption instead of observation.
 
 - Read the actual state before forming a theory: the file, the git log, the error output, the directory listing. Never act on a remembered API, an assumed file layout, or "how this usually works".
-- Explore the *smallest sufficient* amount. One `ls` and two targeted reads beat a ten-file sweep; a ten-file sweep beats guessing. Capture state once and reuse it — don't re-check the same fact in a later step (see `fix-bug` Step 1 vs. `setup-project` Step 1: each detects state exactly once).
+- Explore the *smallest sufficient* amount. One `ls` and two targeted reads beat a ten-file sweep; a ten-file sweep beats guessing. Capture state once and reuse it — don't re-check the same fact in a later step (`setup-project` Step 1 runs `ls -la` exactly once and every later step branches on the stored result).
 - When output contradicts your model of the system, the output wins. Update the model; don't explain the output away.
 - Quote evidence, not conclusions: "the handler at `auth.ts:42` never checks for empty input" is verifiable; "the validation seems wrong" is not.
 
@@ -68,6 +68,8 @@ KISS and YAGNI apply to your own process, not just the code you review.
   1. `npx tsc --noEmit` (if `tsconfig.json` exists)
   2. `npx eslint . --max-warnings 0` (if an ESLint config exists)
   3. `npm run build` (if a `build` script exists)
+
+  For Astro projects without an ESLint config, `npx astro check` replaces steps 1–2.
 - The gate proves the code compiles; it does not prove the behavior changed. Exercise the changed path itself whenever possible — the failing case that now passes, the flow that was broken.
 - Report failures verbatim: the actual command, the actual output. Never soften ("mostly passing"), never omit, never claim a skipped check ran.
 - Never run `npm run dev` — the user owns the dev server.

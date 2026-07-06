@@ -1,7 +1,7 @@
 # Spec Workflow Guide
 
-> Standalone guide for projects using the Spec Workflow MCP server.
-> Configured via `/setup-project` → "Spec Workflow MCP" option.
+> Standalone guide for projects using the Spec Workflow MCP server (`@pimzino/spec-workflow-mcp`).
+> Configured via `/setup-project spec-workflow`, or by typing `spec-workflow` in the Other field of the MCP selection during `/setup-project`.
 
 ---
 
@@ -21,47 +21,38 @@ Each stage must be approved before moving to the next, ensuring thorough plannin
 
 ### 1. Start the Dashboard
 
-After setup, start the Spec Workflow dashboard:
+After setup, start the Spec Workflow dashboard in a separate terminal:
 
 ```bash
-npx @pimzino/spec-workflow-mcp@latest dashboard
+npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
-This opens a web dashboard (usually at `http://localhost:3000`) where you can:
+This serves a web dashboard at `http://localhost:5000` (default port) where you can:
 - View all specs and their status
 - Track task progress visually
-- Approve/reject specs at each stage
+- Approve or reject specs at each stage
+
+A VS Code extension is available as an alternative to the web dashboard.
 
 ### 2. Creating Specs in Claude Code
 
-When working with Claude Code, the spec workflow tools become available. Here's the typical flow:
+The MCP server gives Claude the workflow instructions and the approval machinery; Claude writes the spec documents itself into `.spec-workflow/specs/<feature>/`. The typical flow:
 
-**Step 1: Create Requirements Spec**
+**Step 1: Request a spec**
 ```
-"Create a requirements spec for the user authentication feature"
+"Plan the user authentication feature using spec workflow"
 ```
-Claude will use the `create_requirements_spec` tool to generate a structured requirements document.
+Claude loads the workflow via the `spec-workflow-guide` tool, then writes the requirements document and requests approval through the `approvals` tool.
 
-**Step 2: Review and Approve Requirements**
+**Step 2: Review and approve requirements**
 - Review the generated requirements in the dashboard
-- Click "Approve" to unlock the Design phase
-- Or request changes and regenerate
+- Approve to unlock the Design phase, or request changes with feedback
 
-**Step 3: Create Design Spec**
-```
-"Create a design spec for the approved authentication requirements"
-```
-Claude uses `create_design_spec` to generate technical design based on approved requirements.
+**Step 3: Design**
+Claude writes the technical design based on the approved requirements and requests approval again.
 
-**Step 4: Review and Approve Design**
-- Review architecture, component structure, data models
-- Approve to unlock Task creation
-
-**Step 5: Create Tasks**
-```
-"Break down the authentication design into implementation tasks"
-```
-Claude uses `create_tasks` to generate actionable development tasks.
+**Step 4: Tasks**
+After design approval, Claude breaks the design into actionable implementation tasks. During implementation it records progress with the `log-implementation` tool.
 
 ---
 
@@ -71,24 +62,23 @@ Once configured, these tools are available in Claude Code:
 
 | Tool | Purpose |
 |------|---------|
-| `create_requirements_spec` | Generate requirements document |
-| `create_design_spec` | Generate technical design |
-| `create_tasks` | Break design into tasks |
-| `get_spec_status` | Check current spec status |
-| `approve_spec` | Approve a spec stage |
-| `update_task_status` | Mark tasks as in-progress/done |
-| `list_specs` | List all specs in project |
+| `spec-workflow-guide` | Load the full workflow instructions (Claude calls this first) |
+| `spec-status` | Check the current status of a spec |
+| `approvals` | Request, check, and process approvals for each stage |
+| `log-implementation` | Record implementation progress against tasks |
+
+The document creation itself (requirements, design, tasks) is done by Claude writing markdown files into `.spec-workflow/`, guided by the workflow instructions — there are no separate "create spec" tools.
 
 ---
 
 ## Example Workflow Session
 
 ```
-User: "Let's plan the dashboard feature using spec workflow"
+User: "Let's plan the tasks list feature using spec workflow"
 
-Claude: [Uses create_requirements_spec]
-"I've created a requirements spec for the dashboard. Key requirements:
-- Display list of estimates
+Claude: [loads spec-workflow-guide, writes requirements, requests approval]
+"I've created a requirements spec for the tasks list. Key requirements:
+- Display a list of the user's tasks
 - Filter by status
 - Search functionality
 - Pagination
@@ -97,21 +87,21 @@ Please review in the dashboard and approve to proceed with design."
 
 User: "Approved. Now create the design"
 
-Claude: [Uses create_design_spec]
+Claude: [writes design doc, requests approval]
 "Design spec created. Architecture:
-- DashboardPage component
-- EstimateList with virtualization
+- TasksPage component
+- TaskList with virtualization
 - FilterBar component
-- useEstimates hook with React Query
+- useTasks hook with React Query
 
 Please review and approve to generate tasks."
 
 User: "Looks good, approved. Generate tasks"
 
-Claude: [Uses create_tasks]
+Claude: [writes tasks doc]
 "Created 8 implementation tasks:
-1. Create DashboardPage skeleton
-2. Implement EstimateCard component
+1. Create TasksPage skeleton
+2. Implement TaskCard component
 3. Build FilterBar with status options
 ...
 
@@ -125,7 +115,7 @@ You can track progress in the dashboard. Ready to start implementation?"
 1. **Be specific in requests** - The more context you provide, the better the specs
 2. **Review carefully** - Don't rush approvals; specs are the foundation
 3. **Use the dashboard** - Visual tracking helps maintain overview
-4. **Update task status** - Keep tasks current for accurate progress tracking
+4. **Keep task status current** - Accurate progress tracking depends on it
 5. **Iterate if needed** - It's OK to reject and regenerate specs
 
 ---
@@ -133,8 +123,7 @@ You can track progress in the dashboard. Ready to start implementation?"
 ## Troubleshooting
 
 **Dashboard won't start:**
-- Check if port 3000 is available
-- Try: `npx @pimzino/spec-workflow-mcp@latest dashboard --port 3001`
+- Check if port 5000 is available; stop the process using it, or change the port in `.spec-workflow/config.toml` (see `config.example.toml` generated by the server)
 
 **Tools not available in Claude:**
 - Verify `.mcp.json` is in project root
@@ -143,4 +132,4 @@ You can track progress in the dashboard. Ready to start implementation?"
 
 **Specs not syncing:**
 - Ensure dashboard and Claude Code use same project path
-- Check file permissions in `.specs/` directory
+- Check file permissions in the `.spec-workflow/` directory

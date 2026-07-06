@@ -37,7 +37,7 @@ Assume the model executing the skill is less capable than you. A strong model fi
 - **Deterministic numbered steps.** Each step is one action with an observable result. "Grep for the error message; narrow to the suspect files" is executable. "Investigate the issue" is not a step, it's a wish.
 - **Capture state once, pass it forward.** Detect facts in one early step, name them as variables (`PROJECT_STATE`, `STACK`, `SUPABASE_OPTED_IN`), and have later steps branch on the variable — never re-detect (MANIFEST anti-pattern: duplicate state checks).
 - **Every branch has an explicit condition.** "If `memory-bank/` doesn't exist, skip and continue" — condition, action, continuation. Never "if needed, handle X": the weak executor cannot compute "needed".
-- **Handle the absent case for every dependency.** Missing config, missing script, missing directory: say what happens. `fix-bug` Step 8 runs each check *only if its config exists* and "never treats a missing tool as a failure" — that sentence exists because an executor once did.
+- **Handle the absent case for every dependency.** Missing config, missing script, missing directory: say what happens. `fix-bug` Step 8 runs each check *only if its config exists* and "never treat[s] a missing tool or script as a failure" — that sentence exists because an executor once did.
 - **One confirmation at the decision point, then execute.** `fix-bug` confirms once before editing (Step 6), then runs Steps 7–9 without further permission. Step-by-step confirmations are a MANIFEST anti-pattern.
 - **Checkable success criteria.** End the flow with commands whose exit status decides ("`npx tsc --noEmit` passes"), not judgments ("code is clean").
 
@@ -60,7 +60,7 @@ Agents are single-report specialists, not workflows. The quality bar per part:
 
 - **Single responsibility.** If the description needs "and" to explain the job, split it. `quick-lint` and `code-reviewer` coexist because speed and depth are different jobs.
 - **Frontmatter `<example>` blocks are the trigger.** Write realistic ones: the actual sentence a user would type, the actual assistant sentence before the Task call. A generic example ("user: help me") matches nothing.
-- **Tools follow the job.** Read-heavy agents get `Read, Grep, Glob` and glob-restricted Bash (`Bash(git diff *)`), never `Write`/`Edit`. If an agent doesn't modify code, make that impossible, not just unlikely.
+- **Tools follow the job.** Read-heavy agents get `Read, Grep, Glob` and glob-restricted Bash (`Bash(git diff*)`), never `Write`/`Edit`. If an agent doesn't modify code, make that impossible, not just unlikely.
 - **The output format is a contract, not a suggestion.** Specify the exact template: bold labels, blocking vs. suggestions separated, every finding cited as `path/to/file.ts:42 — issue`. The caller consumes this report; an agent that improvises its format breaks the caller.
 - **Edge cases get their own section.** What if there are no changes to review? What if the diff is 500+ lines? What if the agent is unsure? `code-reviewer` answers all three ("note it as a question rather than an issue") — every agent must answer its equivalents.
 

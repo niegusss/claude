@@ -225,7 +225,7 @@ Set `OS=mac-linux` or `OS=windows`. Used in Steps 7 and 9.
 
 ### 7. Create Memory Bank
 
-`mkdir -p memory-bank memory-bank/integrations`. For each Memory Bank file, copy from `${CLAUDE_SKILL_DIR}/templates/memory-bank/<name>.md` and substitute interview answers into placeholders (`[PROJECT_NAME]`, `[PROBLEM]`, etc.).
+`mkdir -p memory-bank memory-bank/integrations`. For each Memory Bank file, copy from `${CLAUDE_SKILL_DIR}/templates/memory-bank/<name>.md` and substitute interview answers into placeholders (`[PROJECT_NAME]`, `[ONE_PARAGRAPH_OVERVIEW]`, `[USER_TYPE_1]`, etc.).
 
 Stack-aware templates:
 - `STACK=vite` → use `techContext.vite-react.md`, `systemPatterns.vite-react.md`

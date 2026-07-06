@@ -9,7 +9,7 @@ A curated set of Claude Code **skills**, **agents**, and a production-grade **se
 - **Skills** (`skills/`) — auto-invoked Claude Code skills with structured directories (`SKILL.md` + optional `templates/`, `scripts/`, `examples/`).
   - `audit-brief` — audits an existing brief/scope (a file or a folder of docs) for completeness before building: missing info, missing screens, unclear flows, edge cases and their consequences, contradictions. Interviews you to fill gaps, then writes an audit report plus a corrected copy. Analysis only — never scaffolds. Invoked with a path: `/audit-brief docs/`.
   - `setup-project` — interview-driven project bootstrap: Memory Bank, Git, CLAUDE.md, prompt-reminder hook, MCP servers (Supabase, Context7, Spec Workflow, Netlify, ClickUp).
-  - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React, Next.js, or Astro, bootstraps if needed, implements based on `projectbrief.md`.
+  - `initial-prompt` — scaffolds the first working page(s) after `setup-project`. Detects Vite + React, Next.js, Astro, or custom (stops with a manual-bootstrap message), bootstraps if needed, implements based on `projectbrief.md`.
   - `fix-bug` — diagnoses and fixes one specific bug: locates the suspect code, finds the root cause, reproduces it, proposes the smallest fix, applies it after confirmation, then verifies with tsc/eslint/build. Invoked with a description: `/fix-bug "login throws 500 on empty email"`.
 - **Agents** (`agents/`) — 7 specialized subagents (`code-reviewer`, `quick-lint`, `dep-analyzer`, `test-case-generator`, `memory-bank-sync`, `adr-generator`, `security-scanner`).
 - **Docs** (`docs/`) — long-form guides referenced from skills (e.g. Spec Workflow tutorial), plus the working-method and skill-authoring quality docs (`fable-mindset.md`, `fable-skill-authoring.md`).
@@ -36,7 +36,7 @@ Both installers clone this repo and copy `skills/`, `agents/`, `docs/`, `MANIFES
 - macOS / Linux: `~/.claude/`
 - Windows: `%USERPROFILE%\.claude\`
 
-Existing files in the target are left in place — only the whitelist above is touched.
+Files outside the whitelist above are left untouched; whitelisted items are overwritten with the latest version on re-install.
 
 After installing, **restart Claude Code** so it picks up the new skills.
 

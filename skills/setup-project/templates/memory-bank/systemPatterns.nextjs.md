@@ -3,7 +3,7 @@
 ## Architecture overview
 
 - **Frontend:** Next.js 15+ App Router
-- **Backend:** Next.js Server Actions / route handlers; Supabase via `@supabase/ssr` — _Supabase only if opted in during setup_
+- **Backend:** Next.js Server Actions / route handlers; Supabase via `@supabase/ssr` — _Supabase only included if Supabase opted in during setup_
 - **State:** Server components by default; React Context only when state must cross client boundaries
 - **Routing:** File-based via `app/` directory
 
@@ -21,7 +21,7 @@ app/
     page.tsx
 components/          # Reusable UI (PascalCase)
 lib/
-  supabase/          # Supabase clients (server, browser, middleware) — only if Supabase opted in
+  supabase/          # Supabase clients (server, browser, middleware) — only included if Supabase opted in during setup
   utils.ts           # Shared helpers
 public/              # Static assets
 ```
@@ -67,7 +67,7 @@ public/              # Static assets
 - Toasts for non-blocking feedback (server actions return data shape, client renders toast).
 - Lucide React for icons.
 - Recharts for charts (client component only — charts need browser APIs).
-- **shadcn/ui** components when the user opted in during setup. Otherwise, hand-built Tailwind components.
+- **shadcn/ui** components — _only included if user opted in during setup; otherwise hand-built Tailwind components_
 
 ## Code quality
 
@@ -81,7 +81,7 @@ public/              # Static assets
 
 - Validate input in Server Actions / route handlers (use Zod or similar).
 - HTTPS only.
-- _Supabase only (if opted in during setup):_ service-role keys are server-only — never expose them in client components or env vars prefixed with `NEXT_PUBLIC_`; enable RLS on every user-data table.
+- _Supabase security, only included if Supabase opted in during setup:_ service-role keys are server-only — never expose them in client components or env vars prefixed with `NEXT_PUBLIC_`; enable RLS on every user-data table.
 
 ## Error handling
 

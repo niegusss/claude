@@ -76,4 +76,4 @@ src/
 - TDD by default for logic-heavy code.
 - Pick a test runner that fits the stack; document it in `techContext.md`.
 - Unit tests for pure logic; integration tests for module boundaries; E2E sparingly.
-- Coverage target: 80% for logic-heavy modules.
+- Coverage: meet the project's coverage target for logic-heavy modules.

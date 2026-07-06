@@ -3,7 +3,7 @@
 ## Architecture overview
 
 - **Frontend:** SPA, React 18+
-- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage) — _only if Supabase opted in during setup; otherwise frontend-only / client-side storage_
+- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage) — _only included if Supabase opted in during setup; otherwise frontend-only / client-side storage_
 - **State:** React Context for global state; React Query (TanStack Query) for server state
 - **Routing:** React Router v6+
 
@@ -26,7 +26,7 @@ src/
 
 - Pages: PascalCase + `Page` suffix (`HomePage.tsx`)
 - Components: PascalCase, no suffix (`Button.tsx`)
-- Hooks: camelCase + `use` prefix (`useEstimates.ts`)
+- Hooks: camelCase + `use` prefix (`useTasks.ts`)
 - Files match the default export name.
 
 ## React + TypeScript patterns
@@ -56,7 +56,7 @@ src/
 - Toasts for non-blocking feedback.
 - Lucide React for icons.
 - Recharts for charts.
-- **shadcn/ui** components when the user opted in during setup. Otherwise, write components from scratch with Tailwind.
+- **shadcn/ui** components — _only included if user opted in during setup; otherwise write components from scratch with Tailwind_
 
 ## Code quality
 
@@ -72,7 +72,7 @@ src/
 - Validate user input at the boundary (form submission, URL params).
 - Sanitize anything that goes into `dangerouslySetInnerHTML`.
 - Use environment variables for keys; never commit them.
-- Supabase RLS on every table that holds user data. _(only if Supabase opted in during setup)_
+- Supabase RLS on every table that holds user data — _only included if Supabase opted in during setup_
 - HTTPS everywhere; never load backend config over HTTP.
 
 ## Error handling
@@ -84,7 +84,7 @@ src/
 ## Testing
 
 - TDD by default: Red → Green → Refactor.
-- Target: 80% coverage for logic-heavy modules.
+- Coverage: meet the project's coverage target for logic-heavy modules.
 - Unit tests for utilities and hooks.
 - Integration tests for component interactions.
 - E2E tests sparingly — testing pyramid, not testing inverted-pyramid.
