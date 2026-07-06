@@ -26,6 +26,8 @@ The previous slash-commands setup grew organically: files were 600–1700 lines,
 
 This manifest is the source of truth. Every new skill must conform to it. If a rule needs to bend, the manifest is updated first.
 
+This manifest defines the required structure; the quality bar and reasoning method behind it live in `docs/fable-skill-authoring.md` and `docs/fable-mindset.md`.
+
 ---
 
 ## Current skills

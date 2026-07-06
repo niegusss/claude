@@ -151,6 +151,8 @@ Claude reads these at the start of every session. After significant work, Claude
 - **End users:** this file
 - **Project security:** `SECURITY.md`
 - **Skill authors:** `MANIFEST.md`
+- **Working method for models:** `docs/fable-mindset.md`
+- **Skill/agent quality bar:** `docs/fable-skill-authoring.md`
 - **Spec Workflow MCP guide:** `docs/spec-workflow-guide.md`
 - **Per-skill details:** `skills/<name>/SKILL.md`
 - **Per-agent details:** `agents/<name>.md`
